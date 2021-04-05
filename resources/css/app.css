@@ -1,0 +1,172 @@
+:root{
+    --secondary: #42C8D6;
+    --primary: #F7A820;
+    --danger: #9E5FE0;
+    --black: #212429;
+}
+*, ::after, ::before {
+    box-sizing: border-box;
+    text-decoration: none;
+}
+*:not(i){
+    font-family: 'Roboto', sans-serif;
+}
+html,body{
+    height: 100%;
+}
+.wrapper{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+}
+a:hover{
+    text-decoration: none!important;
+}
+.sidebar{
+    width: 280px;
+    height: 100%;
+}
+.dark .sidebar{
+    background-color: #212429;
+}
+.dark .sidebar .nav-link{
+    color: #fff;
+}
+
+.wrapper.lite{
+    background-color: var(--black);
+}
+.sidebar{
+    overflow-y: auto;
+}
+.sidebar .sidebar-header{
+    height: 160px;
+    text-align: center;
+    padding: 32px;
+    padding-bottom: 16px;
+    font-size: 24px;
+}
+.sidebar .sidebar-header img{
+    height: 100%;
+}
+.sidebar .sidebar-content{
+    padding: 32px;
+    padding-top: 16px;
+}
+.nav-list{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.nav-list li{
+    width: 100%;
+    margin-bottom: 16px;
+}
+.nav-link{
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+    color: #fff!important;
+}
+.nav-link .nav-icon{
+    width: 32px;
+    height: 32px;
+    margin-right: 16px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-size: 16px;
+}
+.nav-link.active .nav-icon{
+    background-color: var(--primary);
+    color: #fff;
+}
+.nav-link.active span{
+    color: var(--primary);
+}
+.nav-link span{
+    font-size: 16px;
+}
+
+.content{
+    width: calc(100% - 280px);
+    padding: 16px;
+    overflow-y: auto;
+}
+.content-fluid{
+    min-height: 100%;
+    padding: 32px;
+    background-color: #fff;
+    border-radius: 32px;
+}
+.card{
+    border: 1px solid #ced4da;
+    border-radius: 16px;
+    background-color: #fff;
+}
+.card-header{
+    padding: 16px;
+    padding-bottom: 0px;
+}
+.card-content{
+    padding: 16px;
+}
+.card-title{
+    color: var(--black);
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 8px;
+}
+.card-comment{
+    font-size: 16px;
+    color: var(--primary);
+    margin: 0;
+    margin-bottom: 8px;
+}
+.navbar{
+    margin-bottom: 0!important;
+}
+nav{
+    margin-bottom: 24px;
+}
+
+.table{
+    width: 100%;
+}
+.table .table-header{
+    display: flex;
+    padding: 16px 0;
+    font-weight: bold;
+}
+.table .table-row{
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 12px 0;
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.btn-primary,.btn-primary:hover,.btn-primary:focus,.btn-primary:active{
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+.text-primary{color: var(--primary)!important}
+.modal-header{
+    border-bottom: 0px;
+}
+.modal-footer{
+    border-top: 0px;
+}
+.btn-primary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem transparent!important;
+}
+.vue-numeric-input.form-control{
+    width: 100%!important;
+}
+.vue-numeric-input .numeric-input{
+    border: 0!important;
+}
