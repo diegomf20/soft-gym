@@ -1,12 +1,13 @@
 <template>
     <div class="container-fluid">
         <nav>
-            <h1 class="card-title">Nuevo Egreso</h1>
+            <h1 class="card-title">Nuevo Egreso General</h1>
         </nav>
         <div class="row">
             <div class="col-sm-3">
                 <label for="">Concepto</label>
                 <select class="form-control" v-model="venta.concepto_id">
+                    
                     <option v-for="concepto in conceptos" :value="concepto.id">{{ concepto.descripcion }}</option>
                 </select>
             </div>
@@ -15,6 +16,10 @@
                 <select class="form-control" v-model="venta.cuenta_id">
                     <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
                 </select>
+            </div>
+            <div class="col-sm-3">
+                <label for="">Fecha</label>
+                <input type="date" v-model="venta.fecha" class="form-control">
             </div>
             <div class="col-sm-3">
                 <label for="">Referencia (**)</label>
@@ -39,23 +44,15 @@
                 </div>
                 <div class="col-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
                 <div class="col-4">
-                    {{ item.descripcion_producto }}
-                    <div v-if="item.tipo=='S'">
-                        <hr>
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="">Fecha Inicio:</label>
-                            </div>
-                            <div class="col-8">
-                                <input  class="form-control" type="date" v-model="item.fecha_inicio">
-                            </div>
-                        </div>
-                    </div>
+                    <input type="text" v-model="item.descripcion">
                 </div>
                 <div class="col-1">
                     <input type="number" class="form-control" v-model="item.cantidad">
                 </div>
-                <div class="col-2">{{ Number(item.monto).toFixed(2) }}</div>
+                <div class="col-2">
+                    <input type="text" v-model="item.monto" class="form-control">
+                    <!-- {{ Number(item.monto).toFixed(2) }} -->
+                </div>
                 <div class="col-2">
                     {{(item.cantidad*item.monto).toFixed(2)}}
                 </div>
@@ -80,12 +77,6 @@
             <div class="col-sm-8"></div>
             <div class="col-sm-4">
                 <div class="row text-right">
-                    <div class="col-6 mb-3">
-                        <label for="">Descuento:</label>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <input type="text" class="form-control" v-model="venta.descuento" placeholder="Descuento">
-                    </div>
                     <div class="col-6 mb-3">
                         <label for="">Total:</label>
                     </div>
@@ -182,7 +173,7 @@ export default {
             this.venta.items.push({
                 producto_id: '',
                 codigo: '',
-                descripcion_producto: '',
+                descripcion: '',
                 cantidad: 1,
                 monto: 0,
                 fecha_inicio: moment().format('Y-MM-DD')
@@ -194,19 +185,19 @@ export default {
         buscarProducto(index){
             $('#modal-buscar').modal();
             this.index=index;
-            axios.get(`${url_base}/producto?all`).then((params)=> {
+            axios.get(`${url_base}/producto?tipo=P&all`).then((params)=> {
                 this.productos=params.data
             }); 
         },
         seleccionar(producto){
             $('#modal-buscar').modal('hide');
             this.venta.items[this.index].producto_id=producto.id;
-            this.venta.items[this.index].descripcion_producto=producto.descripcion;
+            this.venta.items[this.index].descripcion=producto.descripcion;
             this.venta.items[this.index].tipo=producto.tipo;
-            this.venta.items[this.index].monto=producto.precio;
+            this.venta.items[this.index].monto=0;
         },
         save(){
-            axios.post(`${url_base}/ingreso`,this.venta)
+            axios.post(`${url_base}/egreso`,this.venta)
             .then((params)=> {
                 var respuesta=params.data;
                 switch (respuesta.status) {
@@ -225,13 +216,12 @@ export default {
         },
         initVenta(){
             return {
-                cliente_id: '',
-                dni: '',
+                concepto_id: 1,
+                cuenta_id: 1,
                 referencia: '',
-                descripcion_cliente: '',
                 items:[],
+                fecha: moment().format('Y-MM-DD'),
                 descuento: 0,
-                cuenta_id: 1
             }
         }
     },

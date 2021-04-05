@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movimiento;
+use App\Models\Stock;
 use App\Models\DetalleEgreso;
 use Illuminate\Http\Request;
+
+use Carbon\Carbon;
 
 class EgresoController extends Controller
 {
@@ -20,10 +23,10 @@ class EgresoController extends Controller
         $items=$request->items;
         $total=0;
         for ($i=0; $i < count($items); $i++) { 
-            $producto_id=$items['producto_id'];
-            $monto=$items['monto'];
-            $cantidad=$items['cantidad'];
-            $descripcion=$items['descripcion'];
+            $producto_id=$items[$i]['producto_id'];
+            $monto=$items[$i]['monto'];
+            $cantidad=$items[$i]['cantidad'];
+            $descripcion=$items[$i]['descripcion'];
             $detalle=new DetalleEgreso();
             $detalle->movimiento_id=$movimiento->id;
             $detalle->producto_id=$producto_id;
@@ -45,5 +48,9 @@ class EgresoController extends Controller
         }
         $movimiento->monto=$total;
         $movimiento->save();
+        return response()->json([
+            "status"=>"OK",
+            "message"=>"Egreso Registrado"
+        ]);
     }
 }

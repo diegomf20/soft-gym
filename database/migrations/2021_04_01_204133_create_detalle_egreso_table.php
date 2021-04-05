@@ -15,8 +15,8 @@ class CreateDetalleEgresoTable extends Migration
     {
         Schema::create('detalle_egreso', function (Blueprint $table) {
             $table->id();
-            $table->integer('producto_id');
             $table->integer('movimiento_id');
+            $table->integer('producto_id')->nullable();
             $table->integer('cantidad');
             $table->decimal('monto', 8, 2);
             $table->string('descripcion',100)->nullable();

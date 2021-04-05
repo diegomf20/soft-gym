@@ -73,7 +73,7 @@ class IngresoController extends Controller
                         $menbresia->cantidad=$cantidad;
                         $menbresia->fecha_inicio=$fecha_inicio;
                         // $menbresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonthsNoOverflow($cantidad);
-                        $menbresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonths($cantidad)-1;
+                        $menbresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonths($cantidad)->subDay();
                         $menbresia->producto_id=$producto_id;
                         $menbresia->save();
                     }

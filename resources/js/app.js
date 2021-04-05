@@ -17,6 +17,10 @@ window.axios = require('axios');
 
 var routes =[
     {
+        path: '/dashboard',
+        component: require('./views/Dashboard.vue').default,
+    },
+    {
         path: '/ingreso',
         component: require('./views/Ingreso.vue').default,
     },

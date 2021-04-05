@@ -10,7 +10,11 @@ class ProductoController extends Controller
     public function index(Request $request)
     {
         if ($request->has('all')) {
-            $productos=Producto::all();
+            if ($request->has('tipo')) {
+                $productos=Producto::where('tipo',$request->tipo)->get();
+            }else {   
+                $productos=Producto::all();
+            }
         }else{
             $productos=Producto::where('tipo',$request->tipo)->paginate(5);
         }
@@ -25,7 +29,6 @@ class ProductoController extends Controller
         $producto->precio=$request->precio;
         $producto->tipo=$request->tipo;
         if ($request->has('pago')) $producto->pago=$request->pago;
-        if ($request->has('tipo')) $producto->tipo=$request->tipo;
         $producto->save();
         return response()->json([
             "status"=>"OK",
