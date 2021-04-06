@@ -7,7 +7,7 @@
             <div class="sidebar-content">
                 <ul class="nav-list">
                     <li class="">
-                        <router-link class="nav-link" to="./dashboard">
+                        <router-link class="nav-link" to="./">
                             <div class="nav-icon">
                                 <i class="fas fa-chart-pie"></i>
                             </div>

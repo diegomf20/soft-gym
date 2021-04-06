@@ -12,12 +12,11 @@ Vue.use(VueNumericInput)
 
 import moment from 'moment';
 window.moment=moment;
-
 window.axios = require('axios');
 
 var routes =[
     {
-        path: '/dashboard',
+        path: '/',
         component: require('./views/Dashboard.vue').default,
     },
     {
