@@ -22,7 +22,7 @@
             <div class="col-lg-4 col-md-6 mb-3">
                 <div id="cumpleanios" class="card">
                     <div class="card-header">
-                        <h6 class="mb-0"><i class="text-success fas fa-birthday-cake"></i> Cumpleaños del Mes</h6>
+                        <h6 class="mb-0"><i class="fas fa-birthday-cake"></i> Cumpleaños del Mes</h6>
                     </div>
                     <div class="card-body scrollable">
                         <ul class="list-group" >
@@ -37,7 +37,14 @@
             <div class="col-md-5">
                 <div class="card">
                     <div class="card-header">
-                        <h6><i class="fas fa-chart-pie"></i> Resumen de Egresos</h6>
+                        <div class="row">
+                            <div class="col-8">
+                                <h6 class="mb-0"><i class="fas fa-chart-pie"></i> Resumen de Egresos</h6>
+                            </div>
+                            <div class="col-4 text-right">
+                                <h6> {{ anio_mes }}</h6>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <canvas id="myChart" width="400" height="350"></canvas>
@@ -75,9 +82,6 @@ p.comentario{
 .card-resumen i{
     font-size: 60px;
 }
-    /* .bg-primary{
-        background-color: var(--primary)!important;
-    } */
 </style>
 <script>
 export default {
@@ -87,7 +91,8 @@ export default {
                 membresias: 0
             },
             cumpleanios: [],
-            egresos: []
+            egresos: [],
+            anio_mes: moment().format('Y-MM')
         }
     },
     mounted() {
