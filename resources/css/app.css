@@ -170,3 +170,9 @@ nav{
 .vue-numeric-input .numeric-input{
     border: 0!important;
 }
+
+.card-footer:last-child {
+    /* border: 1px solid #ced4da; */
+    border-bottom-left-radius:  12px;
+    border-bottom-right-radius:  12px;
+}
