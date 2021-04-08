@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -158,7 +158,7 @@ export default {
                                         sum += Number(data);
                                     });
                                     console.log(sum);
-                                    let percentage = (value*100 / sum).toFixed(2)+"%";
+                                    let percentage = (value*100 / sum).toFixed(0)+"%";
                                     return percentage;
                                 },
                                 color: '#fff',

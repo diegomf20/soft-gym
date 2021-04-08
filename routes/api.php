@@ -16,6 +16,9 @@ Route::resources([
 Route::get('indicadores', 'IndicadoresController@index');
 Route::get('cumpleanios', 'IndicadoresController@cumpleanios');
 Route::get('indicador/egresos', 'IndicadoresController@egresos');
+
+Route::get('reportes/membresias', 'ReportesController@membresias');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

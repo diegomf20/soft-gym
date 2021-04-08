@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menbresia;
+use App\Models\Membresia;
 use App\Models\Stock;
 use App\Models\Cliente;
 use App\Models\Producto;
@@ -68,14 +68,14 @@ class IngresoController extends Controller
                 case 'S':
                     if ($producto->pago='M') {
                         $fecha_inicio=$item['fecha_inicio'];
-                        $menbresia=new Menbresia();
-                        $menbresia->ingreso_id=$ingreso->id;
-                        $menbresia->cantidad=$cantidad;
-                        $menbresia->fecha_inicio=$fecha_inicio;
-                        // $menbresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonthsNoOverflow($cantidad);
-                        $menbresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonths($cantidad)->subDay();
-                        $menbresia->producto_id=$producto_id;
-                        $menbresia->save();
+                        $membresia=new Membresia();
+                        $membresia->ingreso_id=$ingreso->id;
+                        $membresia->cantidad=$cantidad;
+                        $membresia->fecha_inicio=$fecha_inicio;
+                        // $membresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonthsNoOverflow($cantidad);
+                        $membresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonths($cantidad)->subDay();
+                        $membresia->producto_id=$producto_id;
+                        $membresia->save();
                     }
                     break;
             }

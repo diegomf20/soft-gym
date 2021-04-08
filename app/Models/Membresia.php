@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Menbresia extends Model
+class Membresia extends Model
 {
-    protected $table = 'menbresia';
+    protected $table = 'membresia';
 
 }

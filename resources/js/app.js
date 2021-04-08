@@ -47,6 +47,10 @@ var routes =[
         path: '/concepto',
         component: require('./views/Concepto.vue').default,
     },
+    {
+        path: '/membresia',
+        component: require('./views/Membresia.vue').default,
+    },
 ];
 Vue.component('panel',require("./layouts/panel.vue").default);
 

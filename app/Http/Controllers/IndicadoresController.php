@@ -12,7 +12,7 @@ class IndicadoresController extends Controller
         $hoy=Carbon::now()->format('Y-m-d');
         // dd($hoy);
         $query="SELECT count(*) total 
-                FROM menbresia 
+                FROM membresia 
                 WHERE fecha_fin>=?";
         $membresias=DB::select(DB::raw("$query"),[$hoy])[0]->total;
         return response()->json([
@@ -26,8 +26,8 @@ class IndicadoresController extends Controller
                 FROM cliente 
                 WHERE MONTH(fecha_nacimiento)=?";
         DB::statement("SET lc_time_names = 'es_ES'");
-        $menbresias=DB::select(DB::raw("$query"),[Carbon::now()->month]);
-        return response()->json($menbresias);
+        $membresias=DB::select(DB::raw("$query"),[Carbon::now()->month]);
+        return response()->json($membresias);
     }
 
     public function egresos(Request $request){
