@@ -17,7 +17,8 @@ class IngresoController extends Controller
     
     public function index()
     {
-        //
+        $ingresos=Ingreso::paginate(10);
+        return response()->json($ingresos);
     }
 
     public function store(Request $request)

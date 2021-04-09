@@ -24,6 +24,10 @@ var routes =[
         component: require('./views/Ingreso.vue').default,
     },
     {
+        path: '/ingreso/lista',
+        component: require('./views/ListaIngreso.vue').default,
+    },
+    {
         path: '/egreso',
         component: require('./views/Egreso.vue').default,
     },

@@ -10,8 +10,8 @@ Route::resources([
     'cliente'=>'ClienteController',
     'cuenta'=>'CuentaController',
     'concepto'=>'ConceptoController',
-    'ingreso'=>'IngresoController',
     'egreso'=>'EgresoController',
+    'ingreso'=>'IngresoController',
 ]);
 Route::get('indicadores', 'IndicadoresController@index');
 Route::get('cumpleanios', 'IndicadoresController@cumpleanios');
