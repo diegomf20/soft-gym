@@ -20,7 +20,7 @@ class CreateMovimientoTable extends Migration
             $table->string('referencia',100)->nullable();
             $table->decimal('monto', 8, 2);
             $table->date('fecha');
-            $table->enum('tipo',['A','I'])->default('A');
+            $table->enum('estado',['A','I'])->default('A');
             $table->timestamps();
         });
     }

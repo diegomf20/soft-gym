@@ -9,15 +9,27 @@ use App\Models\Producto;
 use App\Models\Movimiento;
 use App\Models\Ingreso;
 use App\Models\DetalleIngreso;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class IngresoController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        $ingresos=Ingreso::paginate(10);
+        $query="SELECT 	I.id,
+                        C.dni,
+                        CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno) descripcion_cliente,
+                        I.descuento,
+                        I.total,
+                        DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
+                        M.estado
+                FROM ingreso I
+                INNER JOIN cliente C on C.id=I.cliente_id
+                INNER JOIN movimiento M on M.id=I.movimiento_id
+                ORDER BY I.created_at DESC";
+        $ingresos=$this->paginate($query,[],10,$request->page);
         return response()->json($ingresos);
     }
 
@@ -93,48 +105,45 @@ class IngresoController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Ingreso  $ingreso
-     * @return \Illuminate\Http\Response
-     */
     public function show(Ingreso $ingreso)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Ingreso  $ingreso
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Ingreso $ingreso)
+    public function destroy($id)
     {
-        //
+        $ingreso=Ingreso::where('id',$id)->first();
+        $movimiento=Movimiento::where('id',$ingreso->movimiento_id)->first();
+        $movimiento->estado='I';
+        $movimiento->save();
+        $stocks=Stock::where('tipo','E')
+                        ->where('referencia_id',$id)
+                        ->get();
+        foreach ($stocks as $key => $stock) {
+            $stock->delete();
+        }
+        $membresias=Membresia::where('ingreso_id',$id)->get();
+        foreach ($membresias as $key => $membresia) {
+            $membresia->delete();
+        }
+        return response()->json([
+            "status"    =>  "OK",
+            "message"   =>  "Ingreso Anulado"
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Ingreso  $ingreso
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Ingreso $ingreso)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Ingreso  $ingreso
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Ingreso $ingreso)
-    {
-        //
+    public function paginate($query,$param,$per_page = 10,$page = 1){
+        // dd((int)$page);
+        $total=DB::select(DB::raw("SELECT count(*) conteo FROM ($query) AL"),$param)[0]->conteo;
+        $last_page=(int)ceil($total/$per_page);
+        $offset=($page-1)*$per_page;
+        
+        $raw_query=DB::select(DB::raw("$query limit $per_page offset $offset"),$param);
+        return [
+                "current_page"  =>  (int)$page,
+                "data"          =>  $raw_query,
+                "total"         =>  $total,
+                "last_page"     =>  $last_page
+            ];
     }
 }

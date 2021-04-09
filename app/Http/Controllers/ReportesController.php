@@ -24,4 +24,6 @@ class ReportesController extends Controller
         $membresias=DB::select(DB::raw("$query"),[$hoy,$hoy]);
         return response()->json($membresias);
     }
+
+    
 }

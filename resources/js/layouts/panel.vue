@@ -22,7 +22,7 @@
                             aria-expanded="false" 
                             aria-controls="collapseIngresos">
                             <div class="nav-icon">
-                                <i class="fas fa-desktop"></i>
+                                <i class="fas fa-cash-register"></i>
                             </div>
                             <span>Ingresos</span>
                         </a>
