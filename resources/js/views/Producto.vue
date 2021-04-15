@@ -74,6 +74,9 @@
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
                             Nuevo
                         </button>
+                        <a class="btn btn-success" :href="excel()">
+                            <i class="far fa-file-excel"></i> Stock de Productos
+                        </a>
                     </div>
                     <div class="col-sm-6 col-lg-4">
                         <input class="form-control" placeholder="search">
@@ -81,21 +84,25 @@
                 </div>
                 <div class="table">
                     <div class="table-header">
-                        <div class="col-2">Codigo</div>
-                        <div class="col-4">Descripción</div>
-                        <div class="col-2">Marca</div>
-                        <div class="col-2">Precio Venta</div>
-                        <div class="col-1">Stock</div>
-                        <div class="col-1">Editar</div>
+                        <div class="row">
+                            <div class="col-2">Codigo</div>
+                            <div class="col-4">Descripción</div>
+                            <div class="col-2">Marca</div>
+                            <div class="col-2">Precio Venta</div>
+                            <div class="col-1">Stock</div>
+                            <div class="col-1">Editar</div>
+                        </div>
                     </div>
                     <div v-for="item in productos.data" class="table-row">
-                        <div class="col-2">{{ item.codigo }}</div>
-                        <div class="col-4">{{ item.descripcion }}</div>
-                        <div class="col-2">{{ item.marca }}</div>
-                        <div class="col-2">{{ item.precio}}</div>
-                        <div class="col-1">10</div>
-                        <div class="col-1">
-                            <a @click="getProducto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
+                        <div class="row">
+                            <div class="col-2">{{ item.codigo }}</div>
+                            <div class="col-4">{{ item.descripcion }}</div>
+                            <div class="col-2">{{ item.marca }}</div>
+                            <div class="col-2">{{ item.precio}}</div>
+                            <div class="col-1">{{ item.stock }}</div>
+                            <div class="col-1">
+                                <a @click="getProducto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -123,6 +130,9 @@ export default {
         this.listar();
     },
     methods: {
+        excel(){
+            return `${url_base}/producto?tipo=P&excel`
+        },
         initProducto(){
             return {
                 tipo: 'P',

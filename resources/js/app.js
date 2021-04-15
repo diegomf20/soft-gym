@@ -14,10 +14,56 @@ import moment from 'moment';
 window.moment=moment;
 window.axios = require('axios');
 
+import Vuex from 'vuex'
+Vue.use(Vuex)
+window.store=new Vuex.Store({
+    state: {
+        cuenta: JSON.parse(localStorage.getItem('cuenta_sistema'))||null,
+        modulos: JSON.parse(localStorage.getItem('modulos')) || [],
+        conexion: false
+    },
+    modules:{
+        // 'sidebar': moduleSidebar
+    },
+    mutations: {        
+        auth_success(state,cuenta){
+            state.cuenta=cuenta;
+            localStorage.setItem('cuenta_sistema',JSON.stringify(state.cuenta));
+            // axios.defaults.headers.common['Authorization'] = state.cuenta.api_token;
+            store.commit('getModulos');
+        },
+        auth_close(state){
+            state.cuenta=null;
+            localStorage.removeItem('cuenta_sistema');
+            localStorage.removeItem('modulos');
+            localStorage.removeItem('fundo');
+        },
+        getModulos(state){
+            if (state.cuenta!=null) {
+                var id=state.cuenta.id;
+                axios.get(url_base+'/user/'+id+'/privilegios')
+                .then(response => {
+                    state.modulos = response.data;
+                    localStorage.setItem('modulos',JSON.stringify(state.modulos));
+                    console.log("modulos actualizados");
+                });
+            }
+        },
+    },
+    actions: {}
+});
+
 var routes =[
     {
         path: '/',
         component: require('./views/Dashboard.vue').default,
+    },
+    {
+        path: '/login',
+        component: require('./views/Login.vue').default,
+        meta:{
+            layout: 'vacio'
+        }
     },
     {
         path: '/ingreso',
@@ -30,6 +76,10 @@ var routes =[
     {
         path: '/egreso',
         component: require('./views/Egreso.vue').default,
+    },
+    {
+        path: '/egreso/lista',
+        component: require('./views/ListaEgreso.vue').default,
     },
     {
         path: '/producto',
@@ -48,6 +98,10 @@ var routes =[
         component: require('./views/Cuenta.vue').default,
     },
     {
+        path: '/user',
+        component: require('./views/User.vue').default,
+    },
+    {
         path: '/concepto',
         component: require('./views/Concepto.vue').default,
     },
@@ -55,16 +109,49 @@ var routes =[
         path: '/membresia',
         component: require('./views/Membresia.vue').default,
     },
+    {
+        path: '/reportes/balance',
+        component: require('./views/Balance.vue').default,
+    },
+    {
+        path: '/reportes/recurrente',
+        component: require('./views/Recurrente.vue').default,
+    },
 ];
-Vue.component('panel',require("./layouts/panel.vue").default);
 
-const router=new VueRouter({
+function login(){
+    return axios.get(url_base+'/comprobar').then(res=>res.data).catch(res=>res);
+}
+var router=new VueRouter({
     mode: 'history',
     routes,
-    linkActiveClass: 'active'
-})
+    linkExactActiveClass: "active"
+});
+router.beforeEach(async (to, from, next) => {
+    var auth=await login();
+    var auth_status=(auth.status=="OK") ?  true : false;
+    if (auth_status) {
+        if (to.path=="/login") {
+            next("/");
+        }else{
+            next();
+        }
+    } else {
+        // console.log("aqui");
+        if (to.path=="/login") {
+            next();
+        }else{
+            next('login');
+        }
+    }
+});
+
+
+Vue.component('vacio',require("./layouts/vacio.vue").default);
+Vue.component('panel',require("./layouts/panel.vue").default);
 const app = new Vue({
     el: '#app',
     router,
+    store,
     render: h => h(Dashboard)
 });

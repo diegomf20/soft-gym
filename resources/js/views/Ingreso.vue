@@ -25,45 +25,52 @@
         </div>
         <div class="table">
             <div class="table-header">
-                <div class="col-1">Buscar</div>
-                <div class="col-1">Tipo</div>
-                <div class="col-4">Descripción</div>
-                <div class="col-1">Cantidad</div>
-                <div class="col-2">Monto</div>
-                <div class="col-2">Sub Total</div>
-                <div class="col-1">Quitar</div>
-            </div>
-            <div v-for="(item,index) in venta.items" class="table-row">
-                <div class="col-1">
-                    <button class="btn btn-info" @click="buscarProducto(index)">
-                        <i class="fas fa-search"></i>
-                    </button>
+                <div class="row">
+                    <div class="col-1">Buscar</div>
+                    <div class="col-1">Tipo</div>
+                    <div class="col-4">Descripción</div>
+                    <div class="col-1">Cantidad</div>
+                    <div class="col-2">Monto</div>
+                    <div class="col-2">Sub Total</div>
+                    <div class="col-1">Quitar</div>
                 </div>
-                <div class="col-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
-                <div class="col-4">
-                    {{ item.descripcion_producto }}
-                    <div v-if="item.tipo=='S'">
-                        <hr>
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="">Fecha Inicio:</label>
-                            </div>
-                            <div class="col-8">
-                                <input  class="form-control" type="date" v-model="item.fecha_inicio">
+            </div>
+            <div 
+                v-for="(item,index) in venta.items" 
+                :key="item.id"
+                class="table-row">
+                <div class="row">
+                    <div class="col-1">
+                        <button class="btn btn-info" @click="buscarProducto(index)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="col-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
+                    <div class="col-4">
+                        {{ item.descripcion_producto }}
+                        <div v-if="item.tipo=='S'">
+                            <hr>
+                            <div class="row">
+                                <div class="col-4">
+                                    <p>Fecha Inicio:</p>
+                                </div>
+                                <div class="col-8">
+                                    <input  class="form-control" type="date" v-model="item.fecha_inicio">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-1">
-                    <input type="number" class="form-control" v-model="item.cantidad">
-                </div>
-                <div class="col-2">{{ Number(item.monto).toFixed(2) }}</div>
-                <div class="col-2">
-                    {{(item.cantidad*item.monto).toFixed(2)}}
-                </div>
-                <div class="col-1">
-                    <a @click="removeItem(index)" type="button" class="btn btn-danger">X</a>
-                    <!-- <a @click="getcuenta(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a> -->
+                    <div class="col-1">
+                        <input type="number" class="form-control" v-model="item.cantidad">
+                    </div>
+                    <div class="col-2">{{ Number(item.monto).toFixed(2) }}</div>
+                    <div class="col-2">
+                        {{(item.cantidad*item.monto).toFixed(2)}}
+                    </div>
+                    <div class="col-1">
+                        <a @click="removeItem(index)" type="button" class="btn btn-danger">X</a>
+                        <!-- <a @click="getcuenta(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a> -->
+                    </div>
                 </div>
             </div>
             <div class="table-row" v-if="venta.items.length==0">

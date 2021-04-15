@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateConceptoTable extends Migration
+class CreateUsersModuloTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateConceptoTable extends Migration
      */
     public function up()
     {
-        Schema::create('concepto', function (Blueprint $table) {
-            $table->string('id',3)->primary();
-            $table->string('descripcion',25);
-            $table->enum('tipo',['I','E']);
+        Schema::create('users_modulo', function (Blueprint $table) {
+            $table->id();
+            $table->integer('users_id');
+            $table->integer('modulo_id');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateConceptoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('concepto');
+        Schema::dropIfExists('users_modulo');
     }
 }

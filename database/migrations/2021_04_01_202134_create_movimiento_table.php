@@ -15,7 +15,7 @@ class CreateMovimientoTable extends Migration
     {
         Schema::create('movimiento', function (Blueprint $table) {
             $table->id();
-            $table->integer('concepto_id');
+            $table->string('concepto_id',3);
             $table->integer('cuenta_id');
             $table->string('referencia',100)->nullable();
             $table->decimal('monto', 8, 2);

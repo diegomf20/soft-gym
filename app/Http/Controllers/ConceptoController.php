@@ -20,6 +20,7 @@ class ConceptoController extends Controller
     public function store(Request $request)
     {
         $concepto=new Concepto();
+        $concepto->id=$request->id;
         $concepto->descripcion=$request->descripcion;
         $concepto->tipo=$request->tipo;
         $concepto->save();
@@ -49,6 +50,6 @@ class ConceptoController extends Controller
 
     public function destroy($id)
     {
-        //
+        
     }
 }

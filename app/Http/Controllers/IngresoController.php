@@ -38,7 +38,7 @@ class IngresoController extends Controller
         
         $cliente=Cliente::where('id',$request->cliente_id)->first();
         $movimiento=new Movimiento();
-        $movimiento->concepto_id=1;
+        $movimiento->concepto_id='IXC';
         $movimiento->cuenta_id=$request->cuenta_id;
         $movimiento->referencia=$request->referencia.' - '.$cliente->nombres.' '.$cliente->ape_paterno;
         $movimiento->monto=0;
@@ -105,9 +105,27 @@ class IngresoController extends Controller
 
     }
 
-    public function show(Ingreso $ingreso)
-    {
-        //
+    public function show($id)
+    {   
+        $query="SELECT 	I.id,
+                        C.dni,
+                        CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno) descripcion_cliente,
+                        I.descuento,
+                        I.total,
+                        DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
+                        M.estado
+                FROM ingreso I
+                INNER JOIN cliente C on C.id=I.cliente_id
+                INNER JOIN movimiento M on M.id=I.movimiento_id
+                WHERE I.id=?";
+        $ingreso=DB::select(DB::raw($query), [$id])[0];
+        // $ingreso=Ingreso::where('id',$id)
+        //                     ->select(DB::raw("DATE_FORMAT(ingreso.created_at,'%d/%m/%Y %h:%i %p') fecha"),'ingreso.')
+        //                     ->first();
+        $detalle=DetalleIngreso::join('producto','producto.id','=','detalle_ingreso.producto_id')
+                    ->where('ingreso_id',$id)->get();
+        $ingreso->detalles=$detalle;
+        return response()->json($ingreso);
     }
 
     public function destroy($id)

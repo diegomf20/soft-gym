@@ -11,22 +11,26 @@
         </div>
         <div class="table">
             <div class="table-header">
-                <div class="col-3">Cliente</div>
-                <div class="col-4">Producto</div>
-                <div class="col-3">Rango de Fechas</div>
-                <div class="col-2">Quedan</div>
+                <div class="row">
+                    <div class="col-3">Cliente</div>
+                    <div class="col-4">Producto</div>
+                    <div class="col-3">Rango de Fechas</div>
+                    <div class="col-2">Quedan</div>
+                </div>
             </div>
             <div    
                 v-for="item in membresias"
                 :key="item.dni" 
                 class="table-row" 
                 :class="item.vencimiento<0 ? 'text-danger':''">
-                <div class="col-3">{{ item.descripcion_cliente }}</div>
-                <div class="col-4">{{ item.descripcion_producto }}</div>
-                <div class="col-3">
-                    {{ `${formatearFecha(item.fecha_inicio)} - ${formatearFecha(item.fecha_fin)}` }}
+                <div class="row">
+                    <div class="col-3">{{ item.descripcion_cliente }}</div>
+                    <div class="col-4">{{ item.descripcion_producto }}</div>
+                    <div class="col-3">
+                        {{ `${formatearFecha(item.fecha_inicio)} - ${formatearFecha(item.fecha_fin)}` }}
+                    </div>
+                    <div class="col-2">{{ item.vencimiento }}</div>
                 </div>
-                <div class="col-2">{{ item.vencimiento }}</div>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <nav>
-            <h1 class="card-title">Lista de Egresos</h1>
+            <h1 class="card-title">Lista de egresos</h1>
         </nav>
         <div class="row">
             <div class="col-sm-12">
@@ -19,23 +19,21 @@
                     <div class="table-header">
                         <div class="row">
                             <div class="col-2">Fecha</div>
-                            <div class="col-2">DNI</div>
-                            <div class="col-3">Nombres y Apellido</div>
-                            <div class="col-2">Descuento</div>
+                            <div class="col-3">Concepto</div>
+                            <div class="col-2">Cuenta</div>
                             <div class="col-2">Total</div>
                             <div class="col-1">Opciones</div>
                         </div>
                     </div>
-                    <div v-for="item in ingresos.data" 
+                    <div v-for="item in egresos.data" 
                         :key="item.id"
                         class="table-row" 
                         :class=" item.estado=='I' ? 'text-danger' : ''">
                         <div class="row">
                             <div class="col-sm-2"><label>Fecha:</label>{{ item.fecha }}</div>
-                            <div class="col-sm-2"><label>DNI:</label>{{ item.dni }}</div>
-                            <div class="col-sm-3">{{ item.descripcion_cliente }}</div>
-                            <div class="col-sm-2">{{ item.descuento}}</div>
-                            <div class="col-sm-2">{{ item.total }}</div>
+                            <div class="col-sm-3"><label>Concepto:</label>{{ item.descripcion_concepto }}</div>
+                            <div class="col-sm-2"><label>Cuenta:</label>{{ item.descripcion_cuenta }}</div>
+                            <div class="col-sm-2">{{ item.monto }}</div>
                             <div class="col-sm-1 text-center">
                                 <a  @click="ver(item.id)"
                                     class="text-info">
@@ -53,8 +51,8 @@
                     </div>
                 </div>
                 <table-paginate 
-                    :current_page="ingresos.current_page" 
-                    :last_page="ingresos.last_page"
+                    :current_page="egresos.current_page" 
+                    :last_page="egresos.last_page"
                     :paginateGet="listar"
                 ></table-paginate>
             </div>
@@ -63,30 +61,30 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-verLabel">Datos de Ingreso</h5>
+                        <h5 class="modal-title" id="modal-verLabel">Datos de egreso</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="ingreso!=null">
+                    <div class="modal-body" v-if="egreso!=null">
                         <div class="row">
                             <div class="col-2">
                                 <b>Fecha:</b>
                             </div>
                             <div class="col-10">
-                                {{ ingreso.fecha }}
+                                {{ egreso.fecha }}
                             </div>
                             <div class="col-2">
-                                <b>DNI:</b>
+                                <b>Concepto:</b>
                             </div>
                             <div class="col-10">
-                                {{ ingreso.dni }}
+                                {{ egreso.descripcion_concepto }}
                             </div>
                             <div class="mb-3 col-2">
-                                <b>Cliente:</b>
+                                <b>Cuenta:</b>
                             </div>
                             <div class="col-10">
-                                {{ ingreso.descripcion_cliente }}
+                                {{ egreso.descripcion_cuenta }}
                             </div>
                         </div>
                         <table class="table table-bordered">
@@ -98,25 +96,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in ingreso.detalles">
+                                <tr v-for="item in egreso.detalles">
                                     <td>{{ item.descripcion }}</td>
                                     <td>{{ item.cantidad }}</td>
-                                    <td>{{ item.precio }}</td>
+                                    <td>{{ item.monto }}</td>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="row">
                             <div class="col-9 text-right">
-                                <b>Descuento:</b>
-                            </div>
-                            <div class="col-3 text-right">
-                                {{ ingreso.descuento }}
-                            </div>
-                            <div class="col-9 text-right">
                                 <b>Total:</b>
                             </div>
                             <div class="col-3 text-right">
-                                {{ ingreso.total }}
+                                {{ egreso.monto }}
                             </div>
                         </div>
                     </div>
@@ -131,8 +123,8 @@ export default {
     components: { TablePaginate },
     data() {
         return {
-            ingresos: [],
-            ingreso: null
+            egresos: [],
+            egreso: null
         }
     },
     mounted() {
@@ -140,14 +132,14 @@ export default {
     },
     methods: {
         listar(n=1){
-            axios.get(`${url_base}/ingreso?page=${n}`).then((params)=> {
-                this.ingresos=params.data
+            axios.get(`${url_base}/egreso?page=${n}`).then((params)=> {
+                this.egresos=params.data
             }); 
         },
         ver(id){
             $('#modal-ver').modal();
-            axios.get(`${url_base}/ingreso/${id}`).then((params)=> {
-                this.ingreso=params.data
+            axios.get(`${url_base}/egreso/${id}`).then((params)=> {
+                this.egreso=params.data
             });
         },
         // formatear(fecha){
@@ -164,11 +156,11 @@ export default {
             })
             .then((willDelete) => {
                 if (willDelete) {
-                    axios.post(`${url_base}/ingreso/${id}`,{
+                    axios.post(`${url_base}/egreso/${id}`,{
                         _method: 'delete'
                     }).then((params)=> {
                         t.listar();
-                        swal("Ingreso Anulado", {
+                        swal("egreso Anulado", {
                             icon: "success",
                         });
                     }); 

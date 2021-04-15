@@ -66,14 +66,14 @@ p.comentario{
 }
 @media (max-width: 992px){
     .sidebar{
-        width: 50px;
+        width: 0px;
     }
     .sidebar .sidebar-header{
-        height: 50px;
+        height: 0px;
         padding: 0;
     }
     .content{
-        width: calc(100% - 50px);
+        width: calc(100% - 0px);
     }
     .content-fluid{
         padding: 16px 8px;

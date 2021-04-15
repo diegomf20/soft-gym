@@ -86,19 +86,23 @@
                 </div>
                 <div class="table">
                     <div class="table-header">
-                        <div class="col-2">Codigo</div>
-                        <div class="col-5">Descripción</div>
-                        <div class="col-2">Pago</div>
-                        <div class="col-2">Precio Venta</div>
-                        <div class="col-1">Editar</div>
+                        <div class="row">
+                            <div class="col-2">Codigo</div>
+                            <div class="col-5">Descripción</div>
+                            <div class="col-2">Pago</div>
+                            <div class="col-2">Precio Venta</div>
+                            <div class="col-1">Editar</div>
+                        </div>
                     </div>
                     <div v-for="item in productos.data" class="table-row">
-                        <div class="col-2">{{ item.codigo }}</div>
-                        <div class="col-5">{{ item.descripcion }}</div>
-                        <div class="col-2">{{ (item.pago=='U')?'Único':'Mensual' }}</div>
-                        <div class="col-2">{{ item.precio}}</div>
-                        <div class="col-1">
-                            <a @click="getProducto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
+                        <div class="row">
+                            <div class="col-2">{{ item.codigo }}</div>
+                            <div class="col-5">{{ item.descripcion }}</div>
+                            <div class="col-2">{{ (item.pago=='U')?'Único':'Mensual' }}</div>
+                            <div class="col-2">{{ item.precio}}</div>
+                            <div class="col-1">
+                                <a @click="getProducto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
