@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <nav>
-            <h1 class="card-title">Lista de Egresos</h1>
+            <h1 class="card-title">Lista de Ingresos</h1>
         </nav>
         <div class="row">
             <div class="col-sm-12">

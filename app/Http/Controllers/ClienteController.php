@@ -3,17 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Exports\ClienteExport;
+use App\Http\Requests\ClienteRequest;
+use App\Http\Requests\ClienteEditarRequest;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        switch ($request->type) {
+            case 'excel':
+                return (new ClienteExport)->download('cliente.xlsx');
+                break;
+            
+            default:
+                # code...
+                break;
+        }
         $clientes=Cliente::paginate(5);
         return response()->json($clientes);
     }
 
-    public function store(Request $request)
+    public function store(ClienteRequest $request)
     {
         $cliente=new Cliente();
         $cliente->dni=$request->dni;
@@ -37,7 +49,7 @@ class ClienteController extends Controller
         return response()->json($cliente);
     }
 
-    public function update(Request $request, $dni)
+    public function update(ClienteEditarRequest $request, $dni)
     {
         $cliente=Cliente::where('dni',$dni)->first();
         $cliente->nombres=$request->nombres;

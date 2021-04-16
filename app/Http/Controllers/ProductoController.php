@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Producto;
 use App\Exports\ProductoExport;
+use App\Http\Requests\ProductoRequest;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -12,6 +13,14 @@ class ProductoController extends Controller
 {
     public function index(Request $request)
     {
+        switch ($request->type) {
+            case 'excel':
+                return (new ProductoExport)->download('producto.xlsx');
+                break;
+            
+            default:
+                break;
+        }
         if ($request->has('all')) {
             if ($request->has('tipo')) {
                 $productos=Producto::where('tipo',$request->tipo)->get();
@@ -27,19 +36,14 @@ class ProductoController extends Controller
                             COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
                     FROM producto P
                     LEFT JOIN stock S on S.producto_id=P.id
-                    WHERE P.tipo='P'
+                    WHERE P.tipo=?
                     GROUP BY P.id";
-            if ($request->has('excel')) {
-                $raw_query=DB::select($query);
-                return Excel::download(new ProductoExport($raw_query), "rpt-stock.xlsx");
-            }
-            $productos=$this->paginate($query,[],10,$request->page);
-            // =Producto::where('tipo',$request->tipo)->paginate(5);
+            $productos=$this->paginate($query,[$request->tipo],10,$request->page);
         }
         return response()->json($productos);
     }
 
-    public function store(Request $request)
+    public function store(ProductoRequest $request)
     {
         $producto=new Producto();
         $producto->descripcion=$request->descripcion;
@@ -69,7 +73,7 @@ class ProductoController extends Controller
         return response()->json($producto);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProductoRequest $request, $id)
     {
         $producto=Producto::where('id',$id)->first();
         $producto->descripcion=$request->descripcion;

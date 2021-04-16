@@ -1,39 +1,32 @@
-<?php
-
+<?php 
 namespace App\Exports;
 
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use Maatwebsite\Excel\Concerns\WithMapping;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class ProductoExport implements FromView, WithColumnFormatting, ShouldAutoSize
+class ProductoExport implements FromArray, WithHeadings, ShouldAutoSize
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    private $data;
- 
-    public function __construct($data)
+    use Exportable;
+
+    public function headings(): array
     {
-        $this->data = $data;
+        return ['codigo','descripcion','marca','precio','stock'];
     }
 
-    public function columnFormats(): array
+    public function array(): array
     {
-        return [
-            // 'B' => NumberFormat::FORMAT_TEXT
-        ];
-    }
-
-    public function view(): View
-    {
-        
-        return view('excel.producto', [
-            'productos' => $this->data
-        ]);
+        $query="SELECT  P.codigo,
+                        P.descripcion,
+                        P.marca,
+                        P.precio,
+                        COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
+                FROM producto P
+                LEFT JOIN stock S on S.producto_id=P.id
+                WHERE P.tipo='P'";
+        return json_decode(json_encode(DB::select($query)));
+        // return Producto::select('nombres','ape_paterno','ape_materno','telefono','email','direccion','fecha_nacimiento')->get();
     }
 }

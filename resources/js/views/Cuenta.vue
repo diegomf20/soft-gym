@@ -14,6 +14,7 @@
                         <div class="form-group">
                             <label for="">Descripción:</label>
                             <input type="text" class="form-control" v-model="cuenta.descripcion">
+                            <span class="text-danger">{{ error_cuenta.descripcion }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -36,6 +37,7 @@
                         <div class="form-group">
                             <label for="">Descripción:</label>
                             <input type="text" class="form-control" v-model="cuenta_editar.descripcion">
+                            <span class="text-danger">{{ error_cuenta_editar.descripcion }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -96,7 +98,9 @@ export default {
         return {
             cuentas: [],
             cuenta: this.initCuenta(),
-            cuenta_editar: this.initCuenta()
+            error_cuenta: this.initValidate(),
+            cuenta_editar: this.initCuenta(),
+            error_cuenta_editar: this.initValidate(),
         }
     },
     mounted() {
@@ -104,6 +108,11 @@ export default {
     },
     methods: {
         initCuenta(){
+            return {
+                descripcion: ''
+            }
+        },
+        initValidate(){
             return {
                 descripcion: ''
             }
@@ -131,6 +140,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_cuenta=errors
+                }
             });
         },
         getcuenta(id){
@@ -158,6 +176,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_cuenta_editar=errors
+                }
             });
         }
     },

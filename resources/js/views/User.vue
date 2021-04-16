@@ -14,22 +14,27 @@
                         <div class="form-group">
                             <label for="">Nombres:</label>
                             <input type="text" class="form-control" v-model="user.nombres">
+                            <span class="text-danger">{{ error_user.nombres }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Apellido Paterno:</label>
                             <input type="text" class="form-control" v-model="user.ape_paterno">
+                            <span class="text-danger">{{ error_user.ape_paterno }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Apellido Materno:</label>
                             <input type="text" class="form-control" v-model="user.ape_materno">
+                            <span class="text-danger">{{ error_user.ape_materno }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Usuario:</label>
                             <input type="text" class="form-control" v-model="user.usuario">
+                            <span class="text-danger">{{ error_user.usuario }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Contraseña:</label>
                             <input type="text" class="form-control" v-model="user.contrasenia">
+                            <span class="text-danger">{{ error_user.contrasenia }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -50,8 +55,19 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="">Usuario:</label>
-                            <input type="text" class="form-control" v-model="user_editar.usuario">
+                            <label for="">Nombres:</label>
+                            <input type="text" class="form-control" v-model="user_editar.nombres">
+                            <span class="text-danger">{{ error_user_editar.nombres }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Apellido Paterno:</label>
+                            <input type="text" class="form-control" v-model="user_editar.ape_paterno">
+                            <span class="text-danger">{{ error_user_editar.ape_paterno }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Apellido Materno:</label>
+                            <input type="text" class="form-control" v-model="user_editar.ape_materno">
+                            <span class="text-danger">{{ error_user_editar.ape_materno }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -104,16 +120,19 @@
                         <div class="row">
                             <div class="col-2">Usuario</div>
                             <div class="col-6">Nombres y Apellido</div>
-                            <div class="col-4">Editar</div>
+                            <div class="col-2">Editar</div>
+                            <div class="col-2">Privilegios</div>
                         </div>
                     </div>
                     <div v-for="item in users.data" class="table-row">
                         <div class="row">
                             <div class="col-2">{{ item.usuario }}</div>
                             <div class="col-6">{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <a @click="getuser(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
-                                <a @click="getPrivilegios(item.id)" type="button" class="text-info"><i class="fas fa-pen"></i></a>
+                            </div>
+                            <div class="col-2">
+                                <a @click="getPrivilegios(item.id)" type="button" class="text-info"><i class="fas fa-user-lock"></i></a>
                             </div>
                         </div>
                     </div>
@@ -136,6 +155,8 @@ export default {
             users: [],
             user: this.inituser(),
             user_editar: this.inituser(),
+            error_user: this.initValidate(),
+            error_user_editar: this.initValidate(),
             privilegios:{
                 user_id: -1,
                 modulos: [] 
@@ -149,6 +170,15 @@ export default {
     },
     methods: {
         inituser(){
+            return {
+                nombres: '',
+                ape_paterno: '',
+                ape_materno: '',
+                usuario: '',
+                contrasenia: ''
+            }
+        },
+        initValidate(){
             return {
                 nombres: '',
                 ape_paterno: '',
@@ -185,6 +215,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_user=errors
+                }
             });
         },
         getuser(id){
@@ -230,6 +269,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_user_editar=errors
+                }
             });
         }
     },

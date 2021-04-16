@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cuenta;
+use App\Http\Requests\CuentaRequest;
 use Illuminate\Http\Request;
 
 class CuentaController extends Controller
@@ -18,7 +19,7 @@ class CuentaController extends Controller
         return response()->json($cuentas);
     }
 
-    public function store(Request $request)
+    public function store(CuentaRequest $request)
     {
         $cuenta=new Cuenta();
         $cuenta->descripcion=$request->descripcion;
@@ -35,7 +36,7 @@ class CuentaController extends Controller
         return response()->json($cuenta);
     }
 
-    public function update(Request $request, $id)
+    public function update(CuentaRequest $request, $id)
     {
         $cuenta=Cuenta::where('id',$id)->first();
         $cuenta->descripcion=$request->descripcion;

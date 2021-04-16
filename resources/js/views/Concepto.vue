@@ -14,10 +14,12 @@
                         <div class="form-group">
                             <label for="">Código:</label>
                             <input type="text" class="form-control" v-model="concepto.id">
+                            <span class="text-danger">{{ error_concepto.id }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Descripción:</label>
                             <input type="text" class="form-control" v-model="concepto.descripcion">
+                            <span class="text-danger">{{ error_concepto.descripcion }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -40,6 +42,7 @@
                         <div class="form-group">
                             <label for="">Descripción:</label>
                             <input type="text" class="form-control" v-model="concepto_editar.descripcion">
+                            <span class="text-danger">{{ error_concepto_editar.descripcion }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -100,7 +103,9 @@ export default {
         return {
             conceptos: [],
             concepto: this.initconcepto(),
-            concepto_editar: this.initconcepto()
+            error_concepto: this.initValidate(),
+            concepto_editar: this.initconcepto(),
+            error_concepto_editar: this.initValidate(),
         }
     },
     mounted() {
@@ -112,6 +117,11 @@ export default {
                 id: '',
                 descripcion: '',
                 tipo: 'E'
+            }
+        },
+        initValidate(){
+            return {
+                descripcion: '',
             }
         },
         listar(n=1){
@@ -137,6 +147,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_concepto=errors
+                }
             });
         },
         getconcepto(id){
@@ -164,6 +183,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_concepto_editar=errors
+                }
             });
         }
     },

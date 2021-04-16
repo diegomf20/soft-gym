@@ -14,34 +14,42 @@
                         <div class="form-group">
                             <label for="">DNI:</label>
                             <input type="text" class="form-control" v-model="cliente.dni">
+                            <span class="text-danger">{{ error_cliente.dni }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Nombres:</label>
                             <input type="text" class="form-control" v-model="cliente.nombres">
+                            <span class="text-danger">{{ error_cliente.nombres }}</span>
                         </div>
-                        <div class="form-group">
-                            <label for="">Apellido Paterno:</label>
-                            <input type="text" class="form-control" v-model="cliente.ape_paterno">
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <label for="">Apellido Paterno:</label>
+                                <input type="text" class="form-control" v-model="cliente.ape_paterno">
+                                <span class="text-danger">{{ error_cliente.ape_paterno }}</span>
+                            </div>
+                            <div class="col-6 form-group">
+                                <label for="">Apellido Materno:</label>
+                                <input type="text" class="form-control" v-model="cliente.ape_materno">
+                                <span class="text-danger">{{ error_cliente.ape_materno }}</span>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="">Apellido Materno:</label>
-                            <input type="text" class="form-control" v-model="cliente.ape_materno">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Teléfono:</label>
-                            <input type="text" class="form-control" v-model="cliente.telefono">
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <label for="">Teléfono:</label>
+                                <input type="text" class="form-control" v-model="cliente.telefono">
+                            </div>
+                            <div class="col-6 form-group">
+                                <label for="">Fecha Nacimiento:</label>
+                                <input type="date" class="form-control" v-model="cliente.fecha_nacimiento">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="">E-mail:</label>
                             <input type="text" class="form-control" v-model="cliente.email">
                         </div>
-                        <div class="form-group">
+                        <div>
                             <label for="">Dirección:</label>
                             <input type="text" class="form-control" v-model="cliente.direccion">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Fecha Nacimiento:</label>
-                            <input type="date" class="form-control" v-model="cliente.fecha_nacimiento">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -62,24 +70,29 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="">DNI:</label>
-                            <input type="text" class="form-control" v-model="cliente_editar.dni">
-                        </div>
-                        <div class="form-group">
                             <label for="">Nombres:</label>
                             <input type="text" class="form-control" v-model="cliente_editar.nombres">
+                            <span class="text-danger">{{ error_cliente_editar.nombres }}</span>
                         </div>
-                        <div class="form-group">
-                            <label for="">Apellido Paterno:</label>
-                            <input type="text" class="form-control" v-model="cliente_editar.ape_paterno">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Apellido Materno:</label>
-                            <input type="text" class="form-control" v-model="cliente_editar.ape_materno">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Teléfono:</label>
-                            <input type="text" class="form-control" v-model="cliente_editar.telefono">
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <label for="">Apellido Paterno:</label>
+                                <input type="text" class="form-control" v-model="cliente_editar.ape_paterno">
+                                <span class="text-danger">{{ error_cliente_editar.ape_paterno }}</span>
+                            </div>
+                            <div class="col-6 form-group">
+                                <label for="">Apellido Materno:</label>
+                                <input type="text" class="form-control" v-model="cliente_editar.ape_materno">
+                                <span class="text-danger">{{ error_cliente_editar.ape_materno }}</span>
+                            </div>
+                            <div class="col-6 form-group">
+                                <label for="">Teléfono:</label>
+                                <input type="text" class="form-control" v-model="cliente_editar.telefono">
+                            </div>
+                            <div class="col-6 form-group">
+                                <label for="">Fecha Nacimiento:</label>
+                                <input type="date" class="form-control" v-model="cliente_editar.fecha_nacimiento">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="">E-mail:</label>
@@ -88,10 +101,6 @@
                         <div class="form-group">
                             <label for="">Dirección:</label>
                             <input type="text" class="form-control" v-model="cliente_editar.direccion">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Fecha Nacimiento:</label>
-                            <input type="date" class="form-control" v-model="cliente_editar.fecha_nacimiento">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -112,6 +121,9 @@
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
                             Nuevo
                         </button>
+                        <a class="btn btn-success" :href="excel()">
+                            <i class="far fa-file-excel"></i> Exportar
+                        </a>
                     </div>
                     <div class="col-sm-6 col-lg-4">
                         <input class="form-control" placeholder="search">
@@ -156,7 +168,9 @@ export default {
         return {
             clientes: [],
             cliente: this.initCliente(),
-            cliente_editar: this.initCliente()
+            error_cliente: this.initValidate(),
+            cliente_editar: this.initCliente(),
+            error_cliente_editar: this.initValidate(),
         }
     },
     mounted() {
@@ -174,8 +188,16 @@ export default {
                 fecha_nacimiento: ''
             }
         },
+        initValidate(){
+            return {
+                dni: '',
+                nombres: '',
+                ape_paterno: '',
+                ape_materno: ''
+            }
+        },
         listar(n=1){
-            axios.get(`${url_base}/cliente?tipo=P&page=${n}`).then((params)=> {
+            axios.get(`${url_base}/cliente?page=${n}`).then((params)=> {
                 this.clientes=params.data
             }); 
         },
@@ -197,6 +219,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_cliente=errors
+                }
             });
         },
         getCliente(dni){
@@ -224,7 +255,19 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_cliente_editar=errors
+                }
             });
+        },
+        excel(){
+            return `${url_base}/cliente?type=excel`
         }
     },
 }

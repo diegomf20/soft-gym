@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Concepto;
+use App\Http\Requests\ConceptoRequest;
+use App\Http\Requests\ConceptoEditarRequest;
 use Illuminate\Http\Request;
 
 class ConceptoController extends Controller
@@ -17,7 +19,7 @@ class ConceptoController extends Controller
         return response()->json($conceptos);
     } 
 
-    public function store(Request $request)
+    public function store(ConceptoRequest $request)
     {
         $concepto=new Concepto();
         $concepto->id=$request->id;
@@ -36,7 +38,7 @@ class ConceptoController extends Controller
         return response()->json($concepto);
     }
     
-    public function update(Request $request, $id)
+    public function update(ConceptoEditarRequest $request, $id)
     {
         $concepto=Concepto::where('id',$id)->first();
         $concepto->descripcion=$request->descripcion;

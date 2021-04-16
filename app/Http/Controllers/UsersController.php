@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\UserModulo;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserEditarRequest;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -63,7 +65,7 @@ class UsersController extends Controller
         return response()->json($users);
     }
 
-    public function store(Request $request){
+    public function store(UserRequest $request){
         $user=new User();
         $user->nombres=$request->nombres;
         $user->ape_paterno=$request->ape_paterno;
@@ -72,21 +74,22 @@ class UsersController extends Controller
         $user->contrasenia=$request->contrasenia;
         $user->save();
         return response()->json([
-                    "status"=>"OK",
-                    "message"=>"Usuario Registrado",
-                ]);
-    }
-
+            "status"=>"OK",
+            "message"=>"Usuario Registrado",
+            ]);
+        }
+        
     public function show($id)
     {
         $user=User::where('id',$id)->first();
         return response()->json($user);
     }
     
-    public function update($id,Request $request){
+    public function update($id,UserEditarRequest $request){
         $user=User::where('id',$id)->first();
-        // $user->usuario=$request->usuario;
-        $user->contrasenia=$request->contrasenia;
+        $user->nombres=$request->nombres;
+        $user->ape_paterno=$request->ape_paterno;
+        $user->ape_materno=$request->ape_materno;
         $user->save();
         return response()->json([
                     "status"=>"OK",

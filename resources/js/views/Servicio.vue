@@ -14,6 +14,7 @@
                         <div class="form-group">
                             <label for="">Descripción:</label>
                             <input type="text" class="form-control" v-model="producto.descripcion">
+                            <span class="text-danger">{{ error_producto.descripcion }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Pago:</label>
@@ -25,6 +26,7 @@
                         <div class="form-group">
                             <label for="">Precio de Venta:</label>
                             <vue-numeric-input  v-model.number="producto.precio" :min="0" :step="2" :controls="false" class="form-control"></vue-numeric-input>
+                            <span class="text-danger">{{ error_producto.precio }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -47,6 +49,7 @@
                         <div class="form-group">
                             <label for="">Descripción:</label>
                             <input type="text" class="form-control" v-model="producto_editar.descripcion">
+                            <span class="text-danger">{{ error_producto_editar.descripcion }}</span>
                         </div>
                         <div class="form-group">
                             <label for="">Pago:</label>
@@ -59,6 +62,7 @@
                             <label for="">Precio de Venta:</label>
                             <!-- <input type="text" class="form-control"  v-model.number="producto_editar.precio"> -->
                             <vue-numeric-input  v-model="producto_editar.precio" :min="0" :step="2" :controls="false" class="form-control"></vue-numeric-input>
+                            <span class="text-danger">{{ error_producto_editar.precio }}</span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -123,7 +127,9 @@ export default {
         return {
             productos: [],
             producto: this.initProducto(),
-            producto_editar: this.initProducto()
+            error_producto: this.initValidate(),
+            producto_editar: this.initProducto(),
+            error_producto_editar: this.initValidate(),
         }
     },
     mounted() {
@@ -136,6 +142,12 @@ export default {
                 descripcion: '',
                 precio: 0,
                 pago: 'U'
+            }
+        },
+        initValidate(){
+            return {
+                descripcion: '',
+                precio: ''
             }
         },
         listar(n=1){
@@ -161,6 +173,15 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_producto=errors
+                }
             });
         },
         getProducto(id){
@@ -188,8 +209,17 @@ export default {
                         break;
                 }
                 this.listar();
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_producto_editar=errors
+                }
             });
         }
     },
 }
-</script>
+</script>   
