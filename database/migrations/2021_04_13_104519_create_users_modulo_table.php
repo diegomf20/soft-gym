@@ -29,7 +29,7 @@ class CreateUsersModuloTable extends Migration
             ]
         ]);
         for ($i=1; $i < 16; $i++) { 
-            DB::table('users')->insert([
+            DB::table('users_modulo')->insert([
                 ['users_id'=>1,'modulo_id'=>$i]
             ]);
         }
