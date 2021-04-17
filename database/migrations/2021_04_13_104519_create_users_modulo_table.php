@@ -19,6 +19,20 @@ class CreateUsersModuloTable extends Migration
             $table->integer('modulo_id');
             $table->timestamps();
         });
+        DB::table('users')->insert([
+            [   'id'=>1,
+                'nombres' => 'Admin',
+                'ape_paterno'=> '.',
+                'ape_materno'=> '.',
+                'usuario'=>'admin',
+                'contrasenia' => 'admin'
+            ]
+        ]);
+        for ($i=1; $i < 16; $i++) { 
+            DB::table('users')->insert([
+                ['users_id'=>1,'modulo_id'=>$i]
+            ]);
+        }
     }
 
     /**

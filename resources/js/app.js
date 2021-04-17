@@ -136,16 +136,35 @@ var router=new VueRouter({
     routes,
     linkExactActiveClass: "active"
 });
+function validado(ruta) {
+    for (let i = 0; i < store.state.modulos.length; i++) {
+        const modulo = store.state.modulos[i];
+        if (modulo.ruta==ruta) {
+            return true;
+        }
+    }
+    return false;
+}
 router.beforeEach(async (to, from, next) => {
     $('.modal-backdrop').remove();
     if (store.state.user_sistema!=null) {
-        if (to.path=="/login") {
-            next("/");
-        }else{
-            next();
+        switch (to.path) {
+            case "/login":
+                next("/");
+                break;
+            case "/":
+                next();
+                break;
+        
+            default:
+                if (validado(to.path)) {
+                    next();
+                }else{
+                    next("/");
+                }
+                break;
         }
     } else {
-        // console.log("aqui");
         if (to.path=="/login") {
             next();
         }else{
@@ -153,6 +172,8 @@ router.beforeEach(async (to, from, next) => {
         }
     }
 });
+
+
 
 
 Vue.component('vacio',require("./layouts/vacio.vue").default);

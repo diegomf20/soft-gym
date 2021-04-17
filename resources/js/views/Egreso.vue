@@ -103,8 +103,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <input class="form-control mb-3" placeholder="search" v-model="search" @keyup="listarProductos()">
                         <table class="table">
-                            <tr v-for="producto in productos">
+                            <tr v-for="producto in productos.data">
                                 <td>{{ producto.descripcion }}</td>
                                 <td>{{ producto.tipo }}</td>
                                 <td>
@@ -133,7 +134,8 @@ export default {
             venta: this.initVenta(), 
             index: 0,
             productos: [],
-            error_egreso: {}
+            error_egreso: {},
+            search: ''
         }
     },
     mounted() {
@@ -190,7 +192,9 @@ export default {
         buscarProducto(index){
             $('#modal-buscar').modal();
             this.index=index;
-            axios.get(`${url_base}/producto?tipo=P&all`).then((params)=> {
+        },
+        listarProductos(){
+            axios.get(`${url_base}/producto?tipo=P&search=${this.search}`).then((params)=> {
                 this.productos=params.data
             }); 
         },

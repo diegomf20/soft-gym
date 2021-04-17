@@ -31,8 +31,10 @@ class CreateModuloTable extends Migration
             ['id'=>9,'titulo' => 'Tabla Usuario', 'ruta' => '/user'],
             ['id'=>10,'titulo' => 'Tabla Concepto', 'ruta' => '/concepto'],
             ['id'=>11,'titulo' => 'Lista Membresias', 'ruta' => '/membresia'],
-            ['id'=>12,'titulo' => 'Reporte Balance', 'ruta' => '/reporte/balance'],
-            ['id'=>13,'titulo' => 'Reporte Cliente Recurrentes', 'ruta' => '/reporte/membresia'],
+            ['id'=>12,'titulo' => 'Reporte Balance Periodo', 'ruta' => '/reportes/balance-periodo'],
+            ['id'=>13,'titulo' => 'Reporte Cliente Recurrentes', 'ruta' => '/reportes/recurrente'],
+            ['id'=>14,'titulo' => 'Reporte Cuenta', 'ruta' => '/reportes/cuenta'],
+            ['id'=>15,'titulo' => 'Otros Reporte', 'ruta' => '/reportes/otros'],
         ]);
     }
 

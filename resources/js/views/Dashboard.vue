@@ -41,11 +41,11 @@
                                 <p class="mb-0 comentario">{{ cliente.fecha }}</p>
                             </li>
                         </ul>
-                        <!-- <li class="list-group-item" > -->
-                            <h6 class="text-secondary text-center" v-if="cumpleanios.length==0"><i class="fas fa-compress-alt"></i> Sin Datos</h6>
-                        <!-- </li> -->
+                        <h6 class="text-secondary text-center" v-if="cumpleanios.length==0"><i class="fas fa-compress-alt"></i> Sin Datos</h6>
                     </div>
                 </div>
+            </div>
+            <div class="col-lg-4">
                 <div id="cumpleanios" class="card mb-3">
                     <div class="card-header">
                         <h6 class="mb-0"><i class="fas fa-birthday-cake"></i> Membresias por Vencer y vencidas</h6>
@@ -62,17 +62,14 @@
                                     <div class="col-12">
                                         {{ `${formatearFecha(item.fecha_inicio)} - ${formatearFecha(item.fecha_fin)}` }}
                                     </div>
-                                    <!-- <div class="col-2">{{ item.vencimiento }}</div> -->
                                 </div>
                             </li>
                         </ul>
-                        <!-- <li class="list-group-item" > -->
                         <h6 class="text-secondary text-center" v-if="membresias.length==0"><i class="fas fa-compress-alt"></i> Sin Datos</h6>
-                        <!-- </li> -->
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <!-- <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -88,7 +85,7 @@
                         <canvas id="myChart" width="400" height="350"></canvas>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

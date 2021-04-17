@@ -7,7 +7,7 @@
             <div class="sidebar-content">
                 <div class="sidebar-user">
                     <div class="sidebar-user-name">
-                        <a class="mb-0">{{ `${user_sistema.nombres} ${user_sistema.ape_paterno}` }}</a> 
+                        <a class="mb-0" v-if="user_sistema!=null">{{ `${user_sistema.nombres} ${user_sistema.ape_paterno}` }}</a> 
                     </div>
                     <div class="sidebar-user-close">
                         <h5 class="mb-0">
@@ -105,32 +105,32 @@
                     </li>
                     <li>
                         <ul class="collapse nav-list" id="collapseTablas">
-                            <li>
+                            <li v-if="existe('/producto')">
                                 <router-link class="nav-link" to="/producto">
                                     <span>Productos</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/servicio')">
                                 <router-link class="nav-link" to="/servicio">
                                     <span>Servicios</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/cliente')">
                                 <router-link class="nav-link" to="/cliente">
                                     <span>Clientes</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/concepto')">
                                 <router-link class="nav-link" to="/concepto">
                                     <span>Conceptos</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/cuenta')">
                                 <router-link class="nav-link" to="/cuenta">
                                     <span>Cuentas</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/user')">
                                 <router-link class="nav-link" to="/user">
                                     <span>Usuarios</span>
                                 </router-link>
@@ -152,22 +152,22 @@
                     </li>
                     <li>
                         <ul class="collapse nav-list" id="collapseReportes">
-                            <li>
+                            <li v-if="existe('/reportes/balance-periodo')">
                                 <router-link class="nav-link" to="/reportes/balance-periodo">
                                     <span>Balance por Periodo</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/reportes/cuenta')">
                                 <router-link class="nav-link" to="/reportes/cuenta">
                                     <span>Cuentas</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/reportes/recurrente')">
                                 <router-link class="nav-link" to="/reportes/recurrente">
                                     <span>Recurrente</span>
                                 </router-link>
                             </li>
-                            <li>
+                            <li v-if="existe('/reportes/otros')">
                                 <router-link class="nav-link" to="/reportes/otros">
                                     <span>Otros</span>
                                 </router-link>

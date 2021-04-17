@@ -12,9 +12,13 @@ class ConceptoController extends Controller
     public function index(Request $request)
     {
         if ($request->has('all')) {
-            $conceptos=Concepto::where('tipo',$request->tipo)->get();
+            $conceptos=Concepto::where('tipo',$request->tipo)
+                ->where('id','<>','ETR')
+                ->get();
         }else{
-            $conceptos=Concepto::where('tipo',$request->tipo)->paginate(5);
+            $conceptos=Concepto::where('tipo',$request->tipo)
+                ->where('id','<>','ETR')
+                ->paginate(5);
         }
         return response()->json($conceptos);
     } 
