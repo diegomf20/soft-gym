@@ -1,2 +1,5 @@
 URL_ARRANQUE
 C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp
+
+optimize
+composer install --optimize-autoloader --no-dev
