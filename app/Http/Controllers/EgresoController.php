@@ -29,6 +29,7 @@ class EgresoController extends Controller
                 INNER JOIN cuenta CU ON CU.id=M.cuenta_id
                 WHERE tipo='E' 
                 AND M.fecha BETWEEN ? AND ?
+                AND C.id NOT IN('ETR','ITR')
                 ORDER BY fecha DESC, id DESC";
         switch ($request->type) {
             case 'excel':
