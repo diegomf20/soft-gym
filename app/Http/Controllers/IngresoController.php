@@ -9,6 +9,8 @@ use App\Models\Producto;
 use App\Models\Movimiento;
 use App\Models\Ingreso;
 use App\Models\DetalleIngreso;
+use App\Exports\MovimientoExport;
+use App\Http\Requests\IngresoRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -18,24 +20,45 @@ class IngresoController extends Controller
     
     public function index(Request $request)
     {
+        
         $query="SELECT 	I.id,
+                        DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
                         C.dni,
                         CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno) descripcion_cliente,
                         I.descuento,
                         I.total,
-                        DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
-                        M.estado
+                        M.estado,
+                        M.creado_por,
+                        M.eliminado_por
                 FROM ingreso I
                 INNER JOIN cliente C on C.id=I.cliente_id
                 INNER JOIN movimiento M on M.id=I.movimiento_id
+                WHERE M.fecha BETWEEN ? AND ?
                 ORDER BY I.created_at DESC";
-        $ingresos=$this->paginate($query,[],10,$request->page);
-        return response()->json($ingresos);
+        switch ($request->type) {
+            case 'excel':
+                $data=DB::select($query, [
+                    $request->fecha_inicio,
+                    $request->fecha_fin
+                ]);
+
+                return (new MovimientoExport([
+                    'id','fecha','DNI','cliente','descuento','total','estado','creado por','eliminado por'
+                ],$data))->download('ingresos_'.$request->fecha_inicio.'_'.$request->fecha_fin.'.xlsx');
+                break;
+            
+            default:
+                $ingresos=$this->paginate($query,[
+                    $request->fecha_inicio,
+                    $request->fecha_fin
+                ],10,$request->page);
+                return response()->json($ingresos);
+                break;
+        }
     }
 
-    public function store(Request $request)
+    public function store(IngresoRequest $request)
     {
-        
         $cliente=Cliente::where('id',$request->cliente_id)->first();
         $movimiento=new Movimiento();
         $movimiento->concepto_id='IXC';
@@ -43,16 +66,22 @@ class IngresoController extends Controller
         $movimiento->referencia=$request->referencia.' - '.$cliente->nombres.' '.$cliente->ape_paterno;
         $movimiento->monto=0;
         $movimiento->fecha=Carbon::now();
+        $movimiento->creado_por=$request->user;
         $movimiento->save();
         $ingreso=new Ingreso();
         $ingreso->descuento=$request->descuento;
         $ingreso->total=0;
-        // $ingreso->fecha=Carbon::now();
         $ingreso->movimiento_id=$movimiento->id;
         $ingreso->cliente_id=$request->cliente_id;
         $ingreso->save();
 
         $items=$request->items;
+        if (count($items)==0) {
+            return response()->json([
+                    "status"    =>  "WARNING",    
+                    "message"   =>  "Agregue al menos un detalle.",    
+                ]);
+        }
         $total=0;
         for ($i=0; $i < count($items); $i++) { 
             $item=$items[$i];
@@ -85,8 +114,7 @@ class IngresoController extends Controller
                         $membresia->ingreso_id=$ingreso->id;
                         $membresia->cantidad=$cantidad;
                         $membresia->fecha_inicio=$fecha_inicio;
-                        // $membresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonthsNoOverflow($cantidad);
-                        $membresia->fecha_fin=Carbon::parse($fecha_inicio)->addMonths($cantidad)->subDay();
+                        $membresia->fecha_fin=Carbon::parse($fecha_inicio)->addDays(30*$cantidad)->subDay();
                         $membresia->producto_id=$producto_id;
                         $membresia->save();
                     }
@@ -113,7 +141,9 @@ class IngresoController extends Controller
                         I.descuento,
                         I.total,
                         DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
-                        M.estado
+                        M.estado,
+                        M.creado_por,
+                        M.eliminado_por
                 FROM ingreso I
                 INNER JOIN cliente C on C.id=I.cliente_id
                 INNER JOIN movimiento M on M.id=I.movimiento_id
@@ -128,11 +158,12 @@ class IngresoController extends Controller
         return response()->json($ingreso);
     }
 
-    public function destroy($id)
+    public function destroy($id,Request $request)
     {
         $ingreso=Ingreso::where('id',$id)->first();
         $movimiento=Movimiento::where('id',$ingreso->movimiento_id)->first();
         $movimiento->estado='I';
+        $movimiento->eliminado_por=$request->user;
         $movimiento->save();
         $stocks=Stock::where('tipo','E')
                         ->where('referencia_id',$id)

@@ -85,7 +85,7 @@
                         </button>
                     </div>
                     <div class="col-sm-6 col-lg-4">
-                        <input class="form-control" placeholder="search">
+                        <input class="form-control" placeholder="search" @keyup="listar()" v-model="search">
                     </div>
                 </div>
                 <div class="table">
@@ -130,6 +130,7 @@ export default {
             error_producto: this.initValidate(),
             producto_editar: this.initProducto(),
             error_producto_editar: this.initValidate(),
+            search: ''
         }
     },
     mounted() {
@@ -151,11 +152,12 @@ export default {
             }
         },
         listar(n=1){
-            axios.get(`${url_base}/producto?tipo=S&page=${n}`).then((params)=> {
+            axios.get(`${url_base}/producto?tipo=S&page=${n}&search=${this.search}`).then((params)=> {
                 this.productos=params.data
             }); 
         },
         save(){
+            this.error_producto=this.initValidate();
             axios.post(`${url_base}/producto`,this.producto)
             .then((params)=> {
                 var respuesta=params.data;
@@ -192,6 +194,7 @@ export default {
             });
         },
         update(){
+            this.error_producto_editar=this.initValidate();
             axios.post(`${url_base}/producto/${this.producto_editar.id}?_method=PUT`,this.producto_editar)
             .then((params)=> {
                 var respuesta=params.data;

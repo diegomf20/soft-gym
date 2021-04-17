@@ -8,21 +8,31 @@
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="card card-resumen">
+                        <div class="mb-3 card card-resumen">
                             <div class="card-body">
-                                <h1 class="text-center mb-0">{{ indicadores.membresias }}</h1>
+                                <h2 class="text-center mb-0">{{ indicadores.membresias }}</h2>
                             </div>
                             <div class="card-footer text-center">
                                 <p class="mb-0">Membresias Activas</p>
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-12">
+                        <div class="mb-3 card card-resumen">
+                            <div class="card-body">
+                                <h2 class="text-center mb-0">S/. {{ ingresos }}</h2>
+                            </div>
+                            <div class="card-footer text-center">
+                                <p class="mb-0">Ingresos Hoy</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div id="cumpleanios" class="card">
+            <div class="col-lg-4 col-md-6">
+                <div id="cumpleanios" class="card mb-3">
                     <div class="card-header">
-                        <h6 class="mb-0"><i class="fas fa-birthday-cake"></i> Cumpleaños del Mes</h6>
+                        <h6 class="mb-0"><i class="fas fa-birthday-cake"></i> Cumpleaños Proximos</h6>
                     </div>
                     <div class="card-body scrollable">
                         <ul class="list-group" >
@@ -31,6 +41,34 @@
                                 <p class="mb-0 comentario">{{ cliente.fecha }}</p>
                             </li>
                         </ul>
+                        <!-- <li class="list-group-item" > -->
+                            <h6 class="text-secondary text-center" v-if="cumpleanios.length==0"><i class="fas fa-compress-alt"></i> Sin Datos</h6>
+                        <!-- </li> -->
+                    </div>
+                </div>
+                <div id="cumpleanios" class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-birthday-cake"></i> Membresias por Vencer y vencidas</h6>
+                    </div>
+                    <div class="card-body scrollable">
+                        <ul class="list-group">
+                            <li v-for="item in membresias"
+                            :key="item.dni" 
+                            class="list-group-item" 
+                            :class="item.vencimiento<0 ? 'text-danger':''">
+                                <div class="row">
+                                    <div class="col-12"><b>{{ item.descripcion_cliente }}</b></div>
+                                    <div class="col-12">{{ item.descripcion_producto }}</div>
+                                    <div class="col-12">
+                                        {{ `${formatearFecha(item.fecha_inicio)} - ${formatearFecha(item.fecha_fin)}` }}
+                                    </div>
+                                    <!-- <div class="col-2">{{ item.vencimiento }}</div> -->
+                                </div>
+                            </li>
+                        </ul>
+                        <!-- <li class="list-group-item" > -->
+                        <h6 class="text-secondary text-center" v-if="membresias.length==0"><i class="fas fa-compress-alt"></i> Sin Datos</h6>
+                        <!-- </li> -->
                     </div>
                 </div>
             </div>
@@ -92,7 +130,9 @@ export default {
             },
             cumpleanios: [],
             egresos: [],
-            anio_mes: moment().format('Y-MM')
+            ingresos: 0,
+            anio_mes: moment().format('Y-MM'),
+            membresias: []
         }
     },
     mounted() {
@@ -102,10 +142,19 @@ export default {
         axios.get(`${url_base}/cumpleanios`).then((params)=> {
             this.cumpleanios=params.data
         }); 
+        axios.get(`${url_base}/indicador/ingresos_hoy`).then((params)=> {
+            this.ingresos=params.data.ingresos
+        }); 
+        axios.get(`${url_base}/indicador/membresias`).then((params)=> {
+            this.membresias=params.data
+        }); 
         
         this.crear();
     },
     methods: {
+        formatearFecha(value){
+            return moment(value).format('DD/MM/Y')
+        },
         crear(){
             axios.get(`${url_base}/indicador/egresos?fecha=2021-04`).then((params)=> {
                 var egresos=params.data

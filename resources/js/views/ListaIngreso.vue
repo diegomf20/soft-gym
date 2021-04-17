@@ -5,15 +5,33 @@
         </nav>
         <div class="row">
             <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-sm-6 col-lg-8">
-                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
-                            Nuevo
-                        </button> -->
+                <div class="row mb-3">
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <b for="">Fecha Inicio:</b>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="date" class="form-control" v-model="fecha_inicio">
+                            </div>
+                            <div class="col-sm-3">
+                                <b for="">Fecha Fin:</b>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="date" class="form-control" v-model="fecha_fin">
+                            </div>
+                        </div>
                     </div>
-                    <!-- <div class="col-sm-6 col-lg-4">
-                        <input class="form-control" placeholder="search">
-                    </div> -->
+                    <div class="col-sm-2">
+                        <button class="btn btn-danger form-control" @click="listar()">
+                            Buscar
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-success form-control" :href="excel()">
+                            Descargar
+                        </a>
+                    </div>
                 </div>
                 <div class="table">
                     <div class="table-header">
@@ -69,24 +87,42 @@
                         </button>
                     </div>
                     <div class="modal-body" v-if="ingreso!=null">
-                        <div class="row">
-                            <div class="col-2">
+                        <div class="row mb-3">
+                            <div class="col-3">
                                 <b>Fecha:</b>
                             </div>
-                            <div class="col-10">
+                            <div class="col-9">
                                 {{ ingreso.fecha }}
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <b>DNI:</b>
                             </div>
-                            <div class="col-10">
+                            <div class="col-9">
                                 {{ ingreso.dni }}
                             </div>
-                            <div class="mb-3 col-2">
+                            <div class="col-3">
                                 <b>Cliente:</b>
                             </div>
-                            <div class="col-10">
+                            <div class="col-9">
                                 {{ ingreso.descripcion_cliente }}
+                            </div>
+                            <!-- <div class="col-3">
+                                <b>Cuenta:</b>
+                            </div>
+                            <div class="col-9">
+                                {{ ingreso.descripcion_cuenta }}
+                            </div> -->
+                            <div class="col-3">
+                                <b>Creado Por:</b>
+                            </div>
+                            <div class="col-9">
+                                {{ ingreso.creado_por }}
+                            </div>
+                            <div v-if="ingreso.eliminado_por" class="col-3">
+                                <b>Eliminado Por:</b>
+                            </div>
+                            <div v-if="ingreso.eliminado_por" class="col-9">
+                                {{ ingreso.eliminado_por }}
                             </div>
                         </div>
                         <table class="table table-bordered">
@@ -132,7 +168,9 @@ export default {
     data() {
         return {
             ingresos: [],
-            ingreso: null
+            ingreso: null,
+            fecha_inicio: moment().startOf('month').format('Y-MM-DD'),
+            fecha_fin: moment().endOf('month').format('Y-MM-DD')
         }
     },
     mounted() {
@@ -140,9 +178,12 @@ export default {
     },
     methods: {
         listar(n=1){
-            axios.get(`${url_base}/ingreso?page=${n}`).then((params)=> {
+            axios.get(`${url_base}/ingreso?page=${n}&fecha_inicio=${this.fecha_inicio}&fecha_fin=${this.fecha_fin}`).then((params)=> {
                 this.ingresos=params.data
             }); 
+        },
+        excel(){
+            return `${url_base}/ingreso?type=excel&fecha_inicio=${this.fecha_inicio}&fecha_fin=${this.fecha_fin}`;
         },
         ver(id){
             $('#modal-ver').modal();

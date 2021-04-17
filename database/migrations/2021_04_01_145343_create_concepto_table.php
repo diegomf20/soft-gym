@@ -19,6 +19,11 @@ class CreateConceptoTable extends Migration
             $table->enum('tipo',['I','E']);
             $table->timestamps();
         });
+        DB::table('concepto')->insert([
+            ['id'=>'IXC','descripcion'=>'Ingreso por Compra','tipo'=>'I'],
+            ['id'=>'ITR','descripcion'=>'Ingreso por Transferencia','tipo'=>'I'],
+            ['id'=>'ETR','descripcion'=>'Egreso por Transferencia','tipo'=>'E']
+        ]);
     }
 
     /**

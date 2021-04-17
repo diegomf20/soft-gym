@@ -7,6 +7,7 @@ use App\Exports\ClienteExport;
 use App\Http\Requests\ClienteRequest;
 use App\Http\Requests\ClienteEditarRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClienteController extends Controller
 {
@@ -21,7 +22,17 @@ class ClienteController extends Controller
                 # code...
                 break;
         }
-        $clientes=Cliente::paginate(5);
+
+        $texto_busqueda=explode(" ",$request->search);
+
+        $clientes=Cliente::where(DB::raw("CONCAT(dni,' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[0]."%");
+        
+        for ($i=1; $i < count($texto_busqueda); $i++) { 
+            $clientes=$clientes->where(DB::raw("CONCAT(dni,' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[$i]."%");
+        }
+
+        $clientes=$clientes->paginate(5);
+
         return response()->json($clientes);
     }
 
@@ -64,6 +75,17 @@ class ClienteController extends Controller
             "status"=>"OK",
             "message"=>"Cliente Actualizado",
         ]);
+    }
+
+    public function historial($id){
+        $query="SELECT P.descripcion, M.fecha_inicio,M.fecha_fin 
+                FROM membresia M 
+                INNER JOIN ingreso I on I.id=M.ingreso_id
+                INNER JOIN producto P on M.producto_id=P.id
+                WHERE I.cliente_id=?
+                ORDER BY fecha_fin DESC";
+        $data=DB::select(DB::raw("$query"),[$id]);
+        return response()->json($data);
     }
 
     /**

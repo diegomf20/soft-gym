@@ -99,6 +99,31 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="modal-reset" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Resetear Contraseña</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Usuario: {{ contrasenia.usuario }}</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Contraseña Nueva:</label>
+                            <input type="text" class="form-control" v-model="contrasenia.nueva">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button @click="reset()" type="button" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <nav>
             <h1 class="card-title">USUARIOS</h1>
             <!-- <h1 class="card-comment mb-0">Control de Stock</h1> -->
@@ -112,27 +137,31 @@
                         </button>
                     </div>
                     <div class="col-sm-6 col-lg-4">
-                        <input class="form-control" placeholder="search">
+                        <input class="form-control" placeholder="search" v-model="search" @keyup="listar()">
                     </div>
                 </div>
                 <div class="table">
                     <div class="table-header">
                         <div class="row">
                             <div class="col-2">Usuario</div>
-                            <div class="col-6">Nombres y Apellido</div>
+                            <div class="col-4">Nombres y Apellido</div>
                             <div class="col-2">Editar</div>
                             <div class="col-2">Privilegios</div>
+                            <div class="col-2">Reset</div>
                         </div>
                     </div>
                     <div v-for="item in users.data" class="table-row">
                         <div class="row">
                             <div class="col-2">{{ item.usuario }}</div>
-                            <div class="col-6">{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
+                            <div class="col-4">{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
                             <div class="col-2">
                                 <a @click="getuser(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
                             </div>
                             <div class="col-2">
                                 <a @click="getPrivilegios(item.id)" type="button" class="text-info"><i class="fas fa-user-lock"></i></a>
+                            </div>
+                            <div class="col-2">
+                                <a @click="abrirReset(item.usuario)" type="button" class="text-info"><i class="fas fa-key"></i></a>
                             </div>
                         </div>
                     </div>
@@ -161,7 +190,12 @@ export default {
                 user_id: -1,
                 modulos: [] 
             },
-            modulos:[]
+            modulos:[],
+            search: '',
+            contrasenia: {
+                usuario: '',
+                nueva:''
+            }
         }
     },
     mounted() {
@@ -170,6 +204,8 @@ export default {
     },
     methods: {
         inituser(){
+            this.error_user=this.initValidate();
+            this.error_user_editar=this.initValidate();
             return {
                 nombres: '',
                 ape_paterno: '',
@@ -193,7 +229,7 @@ export default {
             }); 
         },
         listar(n=1){
-            axios.get(`${url_base}/user?page=${n}`).then((params)=> {
+            axios.get(`${url_base}/user?page=${n}&search=${this.search}`).then((params)=> {
                 this.users=params.data
             }); 
         },
@@ -250,6 +286,29 @@ export default {
             .then((params)=>{
                 $('#modal-privilegios').modal('hide');
             });
+        },
+        abrirReset(usuario){
+            this.contrasenia.usuario=usuario;
+            $('#modal-reset').modal();
+        },
+        reset(usuario){
+            axios.post(`${url_base}/user/reset`,this.contrasenia)
+            .then((params)=> {
+                var respuesta=params.data;
+                switch (respuesta.status) {
+                    case "OK":
+                        swal({
+                            text: respuesta.message,
+                            icon: "success"
+                        });
+                        $('#modal-reset').modal('hide');
+                        this.contrasenia={
+                            usuario: '',
+                            nueva: ''
+                        };
+                        break;
+                }
+            })
         },
         update(){
             axios.post(`${url_base}/user/${this.user_editar.id}?_method=PUT`,this.user_editar)

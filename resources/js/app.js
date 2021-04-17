@@ -18,29 +18,28 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 window.store=new Vuex.Store({
     state: {
-        cuenta: JSON.parse(localStorage.getItem('cuenta_sistema'))||null,
+        user_sistema: JSON.parse(localStorage.getItem('user_sistema'))||null,
         modulos: JSON.parse(localStorage.getItem('modulos')) || [],
-        conexion: false
     },
     modules:{
         // 'sidebar': moduleSidebar
     },
     mutations: {        
-        auth_success(state,cuenta){
-            state.cuenta=cuenta;
-            localStorage.setItem('cuenta_sistema',JSON.stringify(state.cuenta));
-            // axios.defaults.headers.common['Authorization'] = state.cuenta.api_token;
+        auth_success(state,user_sistema){
+            state.user_sistema=user_sistema;
+            localStorage.setItem('user_sistema',JSON.stringify(state.user_sistema));
+            axios.defaults.headers.common['Authorization'] = state.user_sistema.usuario;
             store.commit('getModulos');
         },
         auth_close(state){
-            state.cuenta=null;
-            localStorage.removeItem('cuenta_sistema');
+            console.log("deslogin");
+            state.user_sistema=null;
+            localStorage.removeItem('user_sistema');
             localStorage.removeItem('modulos');
-            localStorage.removeItem('fundo');
         },
         getModulos(state){
-            if (state.cuenta!=null) {
-                var id=state.cuenta.id;
+            if (state.user_sistema!=null) {
+                var id=state.user_sistema.id;
                 axios.get(url_base+'/user/'+id+'/privilegios')
                 .then(response => {
                     state.modulos = response.data;
@@ -52,7 +51,9 @@ window.store=new Vuex.Store({
     },
     actions: {}
 });
-
+if (store.state.user_sistema) {
+    axios.defaults.headers.common['Authorization'] = store.state.user_sistema.usuario;
+}
 var routes =[
     {
         path: '/',
@@ -110,27 +111,34 @@ var routes =[
         component: require('./views/Membresia.vue').default,
     },
     {
-        path: '/reportes/balance',
-        component: require('./views/Balance.vue').default,
+        path: '/reportes/balance-periodo',
+        component: require('./views/BalancePeriodo.vue').default,
     },
     {
         path: '/reportes/recurrente',
         component: require('./views/Recurrente.vue').default,
     },
+    {
+        path: '/reportes/otros',
+        component: require('./views/OtrosReportes.vue').default,
+    },
+    {
+        path: '/reportes/cuenta',
+        component: require('./views/RCuenta.vue').default,
+    },
 ];
 
-function login(){
-    return axios.get(url_base+'/comprobar').then(res=>res.data).catch(res=>res);
-}
+// function login(){
+//     return axios.get(url_base+'/comprobar').then(res=>res.data).catch(res=>res);
+// }
 var router=new VueRouter({
     mode: 'history',
     routes,
     linkExactActiveClass: "active"
 });
 router.beforeEach(async (to, from, next) => {
-    var auth=await login();
-    var auth_status=(auth.status=="OK") ?  true : false;
-    if (auth_status) {
+    $('.modal-backdrop').remove();
+    if (store.state.user_sistema!=null) {
         if (to.path=="/login") {
             next("/");
         }else{

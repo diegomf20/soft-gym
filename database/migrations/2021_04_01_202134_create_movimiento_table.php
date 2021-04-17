@@ -21,6 +21,8 @@ class CreateMovimientoTable extends Migration
             $table->decimal('monto', 8, 2);
             $table->date('fecha');
             $table->enum('estado',['A','I'])->default('A');
+            $table->string('creado_por',20)->nullable();
+            $table->string('eliminado_por',20)->nullable();
             $table->timestamps();
         });
     }

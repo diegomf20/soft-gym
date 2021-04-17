@@ -7,9 +7,9 @@
             <div class="col-sm-3">
                 <label for="">Concepto</label>
                 <select class="form-control" v-model="venta.concepto_id">
-                    
                     <option v-for="concepto in conceptos" :value="concepto.id">{{ concepto.descripcion }}</option>
                 </select>
+                <span class="text-danger">{{ error_egreso.concepto_id }}</span>
             </div>
             <div class="col-sm-3">
                 <label for="">Cuenta</label>
@@ -132,7 +132,8 @@ export default {
             conceptos: [],
             venta: this.initVenta(), 
             index: 0,
-            productos: []
+            productos: [],
+            error_egreso: {}
         }
     },
     mounted() {
@@ -201,6 +202,7 @@ export default {
             this.venta.items[this.index].monto=0;
         },
         save(){
+            this.error_egreso={};
             axios.post(`${url_base}/egreso`,this.venta)
             .then((params)=> {
                 var respuesta=params.data;
@@ -212,15 +214,29 @@ export default {
                         });
                         this.venta=this.initVenta();
                         break;
-                
+                    case "WARNING":
+                        swal({
+                            text: respuesta.message,
+                            icon: "warning"
+                        });
+                        break;
                     default:
                         break;
+                }
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_egreso=errors
                 }
             });
         },
         initVenta(){
             return {
-                concepto_id: 1,
+                concepto_id: null,
                 cuenta_id: 1,
                 referencia: '',
                 items:[],

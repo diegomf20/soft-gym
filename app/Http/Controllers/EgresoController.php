@@ -2,31 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EgresoRequest;
 use App\Models\Movimiento;
+use App\Models\Membresia;
 use App\Models\Stock;
 use App\Models\DetalleEgreso;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-
+use App\Exports\MovimientoExport;
 use Carbon\Carbon;
 
 class EgresoController extends Controller
 {
     public function index(Request $request){
         $query="SELECT 	M.id, 
+                        M.fecha,
                         C.descripcion descripcion_concepto,
                         M.referencia,
-                        M.fecha,
                         M.monto,
                         CU.descripcion descripcion_cuenta,
-                        M.estado 
+                        M.estado, 
+                        M.creado_por,
+                        M.eliminado_por
                 FROM movimiento M 
                 INNER JOIN concepto C ON C.id=M.concepto_id
                 INNER JOIN cuenta CU ON CU.id=M.cuenta_id
-                WHERE tipo='E'
+                WHERE tipo='E' 
+                AND M.fecha BETWEEN ? AND ?
                 ORDER BY fecha DESC, id DESC";
-        $ingresos=$this->paginate($query,[],10,$request->page);
-        return response()->json($ingresos);
+        switch ($request->type) {
+            case 'excel':
+                $data=DB::select($query, [
+                    $request->fecha_inicio,
+                    $request->fecha_fin
+                ]);
+
+                return (new MovimientoExport([
+                    'id','fecha','concepto','referencia','monto','cuenta','estado','creado por','eliminado por'
+                ],$data))->download('ingresos_'.$request->fecha_inicio.'_'.$request->fecha_fin.'.xlsx');
+                break;
+            
+            default:
+                $ingresos=$this->paginate($query,[
+                    $request->fecha_inicio,
+                    $request->fecha_fin
+                ],10,$request->page);
+                return response()->json($ingresos);
+                break;
+        }
     }
     public function show($id)
     {   
@@ -36,6 +59,8 @@ class EgresoController extends Controller
                         M.referencia,
                         M.fecha,
                         M.monto,
+                        M.creado_por,
+                        M.eliminado_por,
                         CU.descripcion descripcion_cuenta 
                 FROM movimiento M 
                 INNER JOIN concepto C ON C.id=M.concepto_id
@@ -48,7 +73,7 @@ class EgresoController extends Controller
         
         return response()->json($egreso);
     }
-    public function store(Request $request){
+    public function store(EgresoRequest $request){
         $fecha=Carbon::parse($request->fecha);
         $movimiento=new Movimiento();
         $movimiento->concepto_id=$request->concepto_id;
@@ -56,9 +81,18 @@ class EgresoController extends Controller
         $movimiento->referencia=$request->referencia;
         $movimiento->monto=0;
         $movimiento->fecha=$fecha;
+        $movimiento->creado_por=$request->user;
         $movimiento->save();
         $items=$request->items;
+
+        if (count($items)==0) {
+            return response()->json([
+                    "status"    =>  "WARNING",    
+                    "message"   =>  "Agregue al menos un detalle.",    
+                ]);
+        }
         $total=0;
+
         for ($i=0; $i < count($items); $i++) { 
             $producto_id=$items[$i]['producto_id'];
             $monto=$items[$i]['monto'];
@@ -91,10 +125,11 @@ class EgresoController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $movimiento=Movimiento::where('id',$id)->first();
         $movimiento->estado='I';
+        $movimiento->eliminado_por=$request->user;
         $movimiento->save();
         $stocks=Stock::where('tipo','E')
                         ->where('referencia_id',$id)
@@ -108,7 +143,7 @@ class EgresoController extends Controller
         }
         return response()->json([
             "status"    =>  "OK",
-            "message"   =>  "Ingreso Anulado"
+            "message"   =>  "Egreso Anulado"
         ]);
     }
 

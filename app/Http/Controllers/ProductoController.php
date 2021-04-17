@@ -28,17 +28,33 @@ class ProductoController extends Controller
                 $productos=Producto::all();
             }
         }else{
-            $query="SELECT  P.id,
-                            P.codigo,
-                            P.descripcion,
-                            P.marca,
-                            P.precio,
-                            COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
-                    FROM producto P
-                    LEFT JOIN stock S on S.producto_id=P.id
-                    WHERE P.tipo=?
-                    GROUP BY P.id";
-            $productos=$this->paginate($query,[$request->tipo],10,$request->page);
+            $texto_busqueda=$request->search;
+            if ($request->has('tipo')) {
+                $query="SELECT  P.id,
+                                P.codigo,
+                                P.descripcion,
+                                P.marca,
+                                P.precio,
+                                COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
+                        FROM producto P
+                        LEFT JOIN stock S on S.producto_id=P.id
+                        WHERE P.tipo=?
+                        AND CONCAT(IFNULL(P.codigo,''),' ',P.descripcion) like ?
+                        GROUP BY P.id";
+                $productos=$this->paginate($query,[$request->tipo,"%$texto_busqueda%"],10,$request->page);
+            }else{
+                $query="SELECT  P.id,
+                                P.codigo,
+                                P.descripcion,
+                                P.marca,
+                                P.precio,
+                                COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
+                        FROM producto P
+                        LEFT JOIN stock S on S.producto_id=P.id
+                        WHERE CONCAT(IFNULL(P.codigo,''),' ',P.descripcion) like ?
+                        GROUP BY P.id";
+                $productos=$this->paginate($query,["%$texto_busqueda%"],10,$request->page);
+            }
         }
         return response()->json($productos);
     }
@@ -95,7 +111,9 @@ class ProductoController extends Controller
     }
 
     public function paginate($query,$param,$per_page = 10,$page = 1){
-        // dd((int)$page);
+        if ($page==null) {
+            $page=1;
+        }
         $total=DB::select(DB::raw("SELECT count(*) conteo FROM ($query) AL"),$param)[0]->conteo;
         $last_page=(int)ceil($total/$per_page);
         $offset=($page-1)*$per_page;

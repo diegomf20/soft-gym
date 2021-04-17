@@ -140,10 +140,10 @@ export default {
                         position: 'right',
                         // display: false
                     },
-                    // title: {
-                    //     display: true,
-                    //     text: 'Egresos por Mes'
-                    // },
+                    title: {
+                        display: true,
+                        text: 'GRAFICO EGRESOS POR CONCEPTO'
+                    },
                     plugins: {
                         datalabels: {
                             formatter: (value, ctx) => {

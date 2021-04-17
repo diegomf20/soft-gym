@@ -5,15 +5,33 @@
         </nav>
         <div class="row">
             <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-sm-6 col-lg-8">
-                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
-                            Nuevo
-                        </button> -->
+                <div class="row mb-3">
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <b for="">Fecha Inicio:</b>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="date" class="form-control" v-model="fecha_inicio">
+                            </div>
+                            <div class="col-sm-3">
+                                <b for="">Fecha Fin:</b>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="date" class="form-control" v-model="fecha_fin">
+                            </div>
+                        </div>
                     </div>
-                    <!-- <div class="col-sm-6 col-lg-4">
-                        <input class="form-control" placeholder="search">
-                    </div> -->
+                    <div class="col-sm-2">
+                        <button class="btn btn-danger form-control" @click="listar()">
+                            Buscar
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-success form-control" :href="excel()">
+                            Descargar
+                        </a>
+                    </div>
                 </div>
                 <div class="table">
                     <div class="table-header">
@@ -67,24 +85,36 @@
                         </button>
                     </div>
                     <div class="modal-body" v-if="egreso!=null">
-                        <div class="row">
-                            <div class="col-2">
+                        <div class="row  mb-3">
+                            <div class="col-3">
                                 <b>Fecha:</b>
                             </div>
-                            <div class="col-10">
+                            <div class="col-9">
                                 {{ egreso.fecha }}
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <b>Concepto:</b>
                             </div>
-                            <div class="col-10">
+                            <div class="col-9">
                                 {{ egreso.descripcion_concepto }}
                             </div>
-                            <div class="mb-3 col-2">
+                            <div class="col-3">
                                 <b>Cuenta:</b>
                             </div>
-                            <div class="col-10">
+                            <div class="col-9">
                                 {{ egreso.descripcion_cuenta }}
+                            </div>
+                            <div class="col-3">
+                                <b>Creado Por:</b>
+                            </div>
+                            <div class="col-9">
+                                {{ egreso.creado_por }}
+                            </div>
+                            <div v-if="egreso.eliminado_por" class="col-3">
+                                <b>Eliminado Por:</b>
+                            </div>
+                            <div v-if="egreso.eliminado_por" class="col-9">
+                                {{ egreso.eliminado_por }}
                             </div>
                         </div>
                         <table class="table table-bordered">
@@ -124,7 +154,9 @@ export default {
     data() {
         return {
             egresos: [],
-            egreso: null
+            egreso: null,
+            fecha_inicio: moment().startOf('month').format('Y-MM-DD'),
+            fecha_fin: moment().endOf('month').format('Y-MM-DD')
         }
     },
     mounted() {
@@ -132,7 +164,7 @@ export default {
     },
     methods: {
         listar(n=1){
-            axios.get(`${url_base}/egreso?page=${n}`).then((params)=> {
+            axios.get(`${url_base}/egreso?page=${n}&fecha_inicio=${this.fecha_inicio}&fecha_fin=${this.fecha_fin}`).then((params)=> {
                 this.egresos=params.data
             }); 
         },
@@ -141,6 +173,9 @@ export default {
             axios.get(`${url_base}/egreso/${id}`).then((params)=> {
                 this.egreso=params.data
             });
+        },
+        excel(){
+            return `${url_base}/egreso?type=excel&fecha_inicio=${this.fecha_inicio}&fecha_fin=${this.fecha_fin}`;
         },
         // formatear(fecha){
         //     console.log(fecha);

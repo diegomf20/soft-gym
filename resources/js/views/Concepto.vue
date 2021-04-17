@@ -64,9 +64,9 @@
                             Nuevo
                         </button>
                     </div>
-                    <div class="col-sm-6 col-lg-4">
+                    <!-- <div class="col-sm-6 col-lg-4">
                         <input class="form-control" placeholder="search">
-                    </div>
+                    </div> -->
                 </div>
                 <div class="table">
                     <div class="table-header">

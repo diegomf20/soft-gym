@@ -5,8 +5,20 @@
                 <img src="/logo.png">
             </div>
             <div class="sidebar-content">
-                <a class="nav-link" @click="logout()">Logout</a>
-                <hr>
+                <div class="sidebar-user">
+                    <div class="sidebar-user-name">
+                        <a class="mb-0">{{ `${user_sistema.nombres} ${user_sistema.ape_paterno}` }}</a> 
+                    </div>
+                    <div class="sidebar-user-close">
+                        <h5 class="mb-0">
+                            <a class="text-primary dropdown-toggle" id="dropdownUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownUser">
+                                <a class="dropdown-item" href="#" @click="abrirCambiar()">Cambiar Contraseña</a>
+                                <a class="dropdown-item" href="#" @click="logout()">Cerrar sesión</a>
+                            </div>
+                        </h5>
+                    </div>
+                </div>
                 <ul class="nav-list">
                     <li>
                         <router-link class="nav-link" to="/">
@@ -141,13 +153,23 @@
                     <li>
                         <ul class="collapse nav-list" id="collapseReportes">
                             <li>
-                                <router-link class="nav-link" to="/reportes/balance">
-                                    <span>Balance</span>
+                                <router-link class="nav-link" to="/reportes/balance-periodo">
+                                    <span>Balance por Periodo</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link class="nav-link" to="/reportes/cuenta">
+                                    <span>Cuentas</span>
                                 </router-link>
                             </li>
                             <li>
                                 <router-link class="nav-link" to="/reportes/recurrente">
                                     <span>Recurrente</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link class="nav-link" to="/reportes/otros">
+                                    <span>Otros</span>
                                 </router-link>
                             </li>
                         </ul>
@@ -160,13 +182,47 @@
                 <slot/>
             </div>
         </div>
+        <div class="modal fade" id="modal-cambiar" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-nuevoLabel">Cambiar Contraseña</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Contraseña Actual:</label>
+                            <input type="text" class="form-control" v-model="contrasenia.actual">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Contraseña Nueva:</label>
+                            <input type="text" class="form-control" v-model="contrasenia.nueva">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button @click="save()" type="button" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import { mapState,mapMutations } from 'vuex'
 export default {
     computed: {
-        ...mapState(['modulos']),
+        ...mapState(['user_sistema','modulos']),
+    },
+    data() {
+        return {
+            contrasenia: {
+                actual: '',
+                nueva: ''
+            }
+        }
     },
     methods: {
         existe(val){
@@ -178,18 +234,39 @@ export default {
             return false;
         },
         logout(){
-            axios.post(`${url_base}/logout`)
+            this.$store.commit('auth_close');
+            this.$router.push({path: "/login"} );
+        },
+        abrirCambiar(){
+            $('#modal-cambiar').modal();
+        },
+        save(){
+            axios.post(`${url_base}/user/contrasenia`,this.contrasenia)
             .then((params)=> {
                 var respuesta=params.data;
                 switch (respuesta.status) {
                     case "OK":
-                        // location.reload();
+                        swal({
+                            text: respuesta.message,
+                            icon: "success"
+                        });
+                        $('#modal-cambiar').modal('hide')
+                        this.contrasenia={
+                            actual: '',
+                            nueva: ''
+                        };
+                        break;
+                    case "ERROR":
+                            swal({
+                                text: respuesta.message,
+                                icon: "error"
+                            });
                         break;
                 
                     default:
                         break;
                 }
-            });
+            })
         }
     },
 }

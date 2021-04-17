@@ -110,6 +110,38 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="modal-historial" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Historial Membresias</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Descripcion</th>
+                                    <th>Inicio</th>
+                                    <th>Fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in historial">
+                                    <td>{{ item.descripcion }}</td>
+                                    <td>{{ item.fecha_inicio }}</td>
+                                    <td>{{ item.fecha_fin }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <nav>
             <h1 class="card-title">CLIENTE</h1>
             <!-- <h1 class="card-comment mb-0">Control de Stock</h1> -->
@@ -126,27 +158,31 @@
                         </a>
                     </div>
                     <div class="col-sm-6 col-lg-4">
-                        <input class="form-control" placeholder="search">
+                        <input class="form-control" placeholder="search" v-model="search" @keyup="listar()">
                     </div>
                 </div>
                 <div class="table">
                     <div class="table-header">
                         <div class="row">
                             <div class="col-2">DNI</div>
-                            <div class="col-4">Nombres y Apellido</div>
+                            <div class="col-3">Nombres y Apellido</div>
                             <div class="col-2">Teléfono</div>
                             <div class="col-3">Email</div>
                             <div class="col-1">Editar</div>
+                            <div class="col-1">Historial</div>
                         </div>
                     </div>
                     <div v-for="item in clientes.data" class="table-row">
                         <div class="row">
                             <div class="col-2">{{ item.dni }}</div>
-                            <div class="col-4">{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
+                            <div class="col-3">{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
                             <div class="col-2">{{ item.telefono }}</div>
                             <div class="col-3">{{ item.email}}</div>
                             <div class="col-1">
                                 <a @click="getCliente(item.dni)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
+                            </div>
+                            <div class="col-1">
+                                <a @click="listarHistorial(item.id)" type="button" class="text-info"><i class="fas fa-history"></i></a>
                             </div>
                         </div>
                     </div>
@@ -167,10 +203,12 @@ export default {
     data() {
         return {
             clientes: [],
+            historial:[],
             cliente: this.initCliente(),
             error_cliente: this.initValidate(),
             cliente_editar: this.initCliente(),
             error_cliente_editar: this.initValidate(),
+            search: ''
         }
     },
     mounted() {
@@ -185,7 +223,7 @@ export default {
                 ape_materno: '',
                 telefono: '',
                 email: '',
-                fecha_nacimiento: ''
+                fecha_nacimiento: '',
             }
         },
         initValidate(){
@@ -197,7 +235,7 @@ export default {
             }
         },
         listar(n=1){
-            axios.get(`${url_base}/cliente?page=${n}`).then((params)=> {
+            axios.get(`${url_base}/cliente?page=${n}&search=${this.search}`).then((params)=> {
                 this.clientes=params.data
             }); 
         },
@@ -268,6 +306,13 @@ export default {
         },
         excel(){
             return `${url_base}/cliente?type=excel`
+        },
+        listarHistorial(id){
+            axios.get(`${url_base}/cliente/${id}/historial`)
+            .then((params)=>{
+                $('#modal-historial').modal();
+                this.historial=params.data;
+            });
         }
     },
 }

@@ -7,6 +7,7 @@
             <div class="col-sm-2">
                 <label for="">DNI: </label>
                 <input @keyup="getCliente" type="text" class="form-control" v-model="venta.dni">
+                <span class="text-danger">{{ error_ingreso.cliente_id }}</span>
             </div>
             <div class="col-sm-4">
                 <label for="">Nombres y apellidos: </label>
@@ -117,8 +118,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <input class="form-control mb-3" placeholder="search" v-model="search" @keyup="listarProductos()">
                         <table class="table">
-                            <tr v-for="producto in productos">
+                            <tr v-for="producto in productos.data">
                                 <td>{{ producto.descripcion }}</td>
                                 <td>{{ producto.tipo }}</td>
                                 <td>
@@ -129,29 +131,30 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button @click="save()" type="button" class="btn btn-primary">Guardar</button>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { mapState,mapMutations } from 'vuex'
+
 export default {
     data() {
         return {
             cuentas: [],
             venta: this.initVenta(), 
             index: 0,
-            productos: []
+            productos: [],
+            error_ingreso:{},
+            search: ''
         }
     },
     mounted() {
         this.listarCuentas();
     },
-    computed:{
+    computed: {
+        ...mapState(['user_sistema']),
         totalVenta(){
             var total=0;
             for (let i = 0; i < this.venta.items.length; i++) {
@@ -196,7 +199,10 @@ export default {
         buscarProducto(index){
             $('#modal-buscar').modal();
             this.index=index;
-            axios.get(`${url_base}/producto?all`).then((params)=> {
+            // this.listarProductos();
+        },
+        listarProductos(){
+            axios.get(`${url_base}/producto?search=${this.search}`).then((params)=> {
                 this.productos=params.data
             }); 
         },
@@ -206,8 +212,10 @@ export default {
             this.venta.items[this.index].descripcion_producto=producto.descripcion;
             this.venta.items[this.index].tipo=producto.tipo;
             this.venta.items[this.index].monto=producto.precio;
+            this.search='';
         },
         save(){
+            this.error_ingreso={};
             axios.post(`${url_base}/ingreso`,this.venta)
             .then((params)=> {
                 var respuesta=params.data;
@@ -219,9 +227,24 @@ export default {
                         });
                         this.venta=this.initVenta();
                         break;
-                
+                    case "WARNING":
+                        swal({
+                            text: respuesta.message,
+                            icon: "warning"
+                        });
+                        break;
+
                     default:
                         break;
+                }
+            }).catch((error)=>{
+                var response=error.response;
+                if (response.status==422) {
+                    var errors=response.data.errors;
+                    for(var i in errors){
+                        errors[i]=errors[i][0];
+                    }
+                    this.error_ingreso=errors
                 }
             });
         },

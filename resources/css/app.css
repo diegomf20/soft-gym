@@ -39,6 +39,23 @@ a:hover{
 .dark .sidebar .nav-link{
     color: #fff;
 }
+.sidebar-user{
+    color: #fff;
+    display: flex;
+    padding: 16px;
+    border-top: 1px solid #6c6e70;
+    border-bottom: 1px solid #6c6e70;
+}
+.sidebar-user-name{
+    width: calc(100% - 40px);
+    display: flex;
+    align-items: center;
+}
+.sidebar-user-close{
+    text-align: right;
+    width: 40px;
+}
+
 
 .wrapper.lite{
     background-color: var(--black);
@@ -182,7 +199,7 @@ nav{
 }
 
 .btn-primary,.btn-primary:hover,.btn-primary:focus,.btn-primary:active{
-    background-color: var(--primary);
+    background-color: var(--primary)!important;
     border-color: var(--primary);
 }
 .text-primary,a.text-primary:hover{color: var(--primary)!important}
@@ -193,6 +210,11 @@ nav{
 .btn-success,.btn-success:hover,.btn-success:focus,.btn-success:active{
     background-color: var(--success)!important;
     border-color: var(--success)!important;
+}
+.btn-danger,.btn-danger:hover,.btn-danger:focus,.btn-danger:active{
+    background-color: #dc3545!important;
+    border-color: #dc3545!important;
+    color: #fff;
 }
 .modal-header{
     border-bottom: 0px;

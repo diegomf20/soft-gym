@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Exports\BalanceAnualExport;
+use App\Exports\ProductoAnualExport;
 use Carbon\Carbon;
 
 class ReportesController extends Controller
@@ -34,8 +36,8 @@ class ReportesController extends Controller
                                 SUM(I.total) total 
                 FROM cliente C
                 INNER JOIN ingreso I on C.id=I.cliente_id
-                WHERE I.created_at>='2021-04-10'
-                AND I.created_at<='2021-04-14'
+                WHERE I.created_at>=?
+                AND I.created_at<=?
                 GROUP BY dni
                 ORDER BY total DESC";
         $data=DB::select(DB::raw("$query"),[
@@ -53,6 +55,7 @@ class ReportesController extends Controller
                 WHERE fecha>=?
                 AND fecha<=?
                 AND M.estado='A'
+                AND C.id NOT IN('ETR','ITR')
                 GROUP BY C.id
                 ORDER BY tipo";
         $data=DB::select(DB::raw("$query"),[
@@ -62,7 +65,37 @@ class ReportesController extends Controller
         // $data=$this->paginate($query,[],10,$request->page);
         return response()->json($data);
     }
-
+    public function resumen(){
+        $query="SELECT 	CU.descripcion,
+                        SUM(IF(tipo='I',monto,0)) - SUM(IF(tipo='E',monto,0)) total
+                FROM cuenta CU
+                LEFT JOIN movimiento M on CU.id=M.cuenta_id
+                LEFT JOIN concepto C on C.id=M.concepto_id
+                WHERE M.estado='A' OR ISNULL(M.estado)
+                GROUP BY CU.descripcion";
+        $data=DB::select($query);
+        return response()->json($data);    
+    }
+    
+    public function cuenta(Request $request){
+        $query="SELECT 	CU.descripcion descripcion,
+                        SUM(IF(tipo='I',monto,0)) ingreso,
+                        SUM(IF(tipo='E',monto,0)) egreso 
+                FROM movimiento M
+                INNER JOIN concepto C on C.id=M.concepto_id
+                INNER JOIN cuenta CU on CU.id=M.cuenta_id
+                WHERE fecha BETWEEN ? AND ?
+                AND M.estado='A'
+                AND C.id NOT IN('ETR','ITR')
+                GROUP BY CU.descripcion
+                ORDER BY tipo";
+        $data=DB::select(DB::raw("$query"),[
+            $request->fecha_inicio,
+            $request->fecha_fin
+        ]);
+        return response()->json($data);
+    }
+    
     public function balance_anual(Request $request){
         $year=$request->year;
         $query="(SELECT 	C.descripcion,
@@ -92,8 +125,9 @@ class ReportesController extends Controller
                             SUM(IF(tipo='E' AND MONTH(fecha)=12,monto,0)) egr_12
                     FROM movimiento M
                     INNER JOIN concepto C on C.id=M.concepto_id
-                    WHERE YEAR(fecha)=2021
+                    WHERE YEAR(fecha)=?
                     AND M.estado='A'
+                    AND C.id NOT IN('ETR','ITR')
                     GROUP BY C.descripcion
                     ORDER BY tipo)
                     UNION
@@ -124,11 +158,40 @@ class ReportesController extends Controller
                             SUM(IF(tipo='E' AND MONTH(fecha)=12,monto,0)) egr_12
                     FROM movimiento M
                     INNER JOIN concepto C on C.id=M.concepto_id
-                    WHERE YEAR(fecha)=2021
+                    WHERE YEAR(fecha)=?
                     AND M.estado='A'
+                    AND C.id NOT IN('ETR','ITR')
                     ORDER BY tipo)";
+        $data=DB::select($query,[$year,$year]);
+        return (new BalanceAnualExport($data))->download("balance_anual_$year.xlsx");
+        
+        // return response()->json($data);
+    }
+
+    public function producto_anual(Request $request){
+        $year=$request->year;
+        $query="SELECT 	p.codigo,
+                        p.descripcion,
+                        SUM(IF(MONTH(fecha)=1,cantidad,0)) ENERO,
+                        SUM(IF(MONTH(fecha)=2,cantidad,0)) FEBRERO,
+                        SUM(IF(MONTH(fecha)=3,cantidad,0)) MARZO,
+                        SUM(IF(MONTH(fecha)=4,cantidad,0)) ABRIL,
+                        SUM(IF(MONTH(fecha)=5,cantidad,0)) MAYO,
+                        SUM(IF(MONTH(fecha)=6,cantidad,0)) JUNIO,
+                        SUM(IF(MONTH(fecha)=7,cantidad,0)) JULIO,
+                        SUM(IF(MONTH(fecha)=8,cantidad,0)) AGOSTO,
+                        SUM(IF(MONTH(fecha)=9,cantidad,0)) SEPTIEMBRE,
+                        SUM(IF(MONTH(fecha)=10,cantidad,0)) OCTUBRE,
+                        SUM(IF(MONTH(fecha)=11,cantidad,0)) NOVIEMBRE,
+                        SUM(IF(MONTH(fecha)=12,cantidad,0)) DICIEMBRE
+                FROM producto P
+                INNER JOIN stock S on P.id=S.producto_id
+                WHERE S.tipo='E'
+                AND YEAR(fecha)=?
+                GROUP BY P.descripcion";
         $data=DB::select($query,[$year]);
-        return response()->json($data);
+        return (new ProductoAnualExport($data))->download("productos_anual_$year.xlsx");
+        
     }
 
     public function paginate($query,$param,$per_page = 10,$page = 1){

@@ -6,6 +6,8 @@ use App\Models\UserModulo;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\UserEditarRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class UsersController extends Controller
 {
@@ -13,12 +15,6 @@ class UsersController extends Controller
         $user=User::where('usuario',$request->usuario)
                 ->where('contrasenia',$request->contrasenia)
                 ->first();
-        // Session::put('tienda', "value");
-        // session(['user' => 'value']);
-        // $session=session("user",10);
-        // $request->session()->put('user',10);
-        // $request->session()->save();
-        // dd($request->session()->all());
         try {
             if ($user!=null) {
                 $_SESSION["user"]=$user;
@@ -30,7 +26,7 @@ class UsersController extends Controller
             }else{
                 return response()->json([
                     "status" => "ERROR",
-                    "data" => "Datos Incorrectos"
+                    "message" => "Datos Incorrectos"
                 ]);
             }
         } catch (Exception $th) {
@@ -61,7 +57,16 @@ class UsersController extends Controller
     }
 
     public function index(Request $request){
-        $users=User::paginate(6);
+        $texto_busqueda=explode(" ",$request->search);
+
+        $users=User::where(DB::raw("CONCAT(usuario,' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[0]."%");
+        
+        for ($i=1; $i < count($texto_busqueda); $i++) { 
+            $users=$users->where(DB::raw("CONCAT(usuario,' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[$i]."%");
+        }
+        $users=$users->paginate(6);
+
+        // $users=User::paginate(6);
         return response()->json($users);
     }
 
@@ -95,6 +100,36 @@ class UsersController extends Controller
                     "status"=>"OK",
                     "message"=>"Usuario Actualizado",
                 ]);
+            }
+    public function contrasenia(Request $request){
+        $user=User::where('usuario',$request->user)
+            ->where('contrasenia',$request->actual)
+            ->first();
+        // dd($request->all(),$user);
+        if ($user==null) {
+            return response()->json([
+                        "status"=>"ERROR",
+                        "message"=>"Contraseña Actual Incorrecta",
+                    ]);
+        }else{
+            $user->contrasenia=$request->nueva;
+            $user->save();
+            return response()->json([
+                        "status"=>"OK",
+                        "message"=>"Contraseña Actualizada",
+                    ]);
+        }
+                
+    }
+    public function reset(Request $request){
+        $user=User::where('usuario',$request->usuario)
+            ->first();
+        $user->contrasenia=$request->nueva;
+        $user->save();
+        return response()->json([
+                "status"=>"OK",
+                "message"=>"Contraseña Reseteada",
+            ]);
     }
 
     public function privilegios($id){
