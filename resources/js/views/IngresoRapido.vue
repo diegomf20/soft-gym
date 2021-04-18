@@ -4,42 +4,83 @@
             <h1 class="card-title">Nuevo Ingreso</h1>
         </nav>
         <div class="row">
-            <div class="col-sm-5">
-                <label for="">Nombres y apellidos: </label>
-                <v-select 
-                        :reduce="cliente => cliente.id"
-                        label="nombres"
-                        :filterable="false" 
-                        :options="clientes"
-                        @search="getCliente"
-                        v-model="venta.cliente_id">
-                    <template slot="no-options">
-                        Buscando cliente ...
-                    </template>
-                    <template slot="option" slot-scope="option">
-                        {{ `${option.nombres} ${option.ape_paterno} ${option.ape_materno}` }}
-                    </template>
-                    <template slot="selected-option" slot-scope="option">
-                        {{ `${option.nombres} ${option.ape_paterno} ${option.ape_materno}` }}
-                    </template>
-                </v-select>
-                <span class="text-danger">{{ error_ingreso.cliente_id }}</span>
-                <!-- <div class="input-group">
-                    <input type="text" class="form-control" v-model="venta.descripcion_cliente" disabled>
-                    <button class="input-group-text btn btn-primary">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div> -->
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Datos Generales</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <p>Fecha Inicio:</p>
+                            </div>
+                            <div class="col-8">
+                                <input  class="form-control" type="date" v-model="venta.items[0].fecha_inicio">
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="">DNI o Código: </label>
+                                <input @keyup="getCliente" type="text" class="form-control" v-model="venta.dni">
+                                <span class="text-danger">{{ error_ingreso.cliente_id }}</span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="">Nombres y apellidos: </label>
+                                <input type="text" class="form-control" v-model="venta.descripcion_cliente" disabled>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="">Cuenta</label>
+                                <select class="form-control" v-model="venta.cuenta_id">
+                                    <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="">Referencia (**)</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-4">
-                <label for="">Cuenta</label>
-                <select class="form-control" v-model="venta.cuenta_id">
-                    <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
-                </select>
-            </div>
-            <div class="col-sm-3">
-                <label for="">Referencia (**)</label>
-                <input type="text" class="form-control">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Datos Servicio</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" v-model="venta.items[0].descripcion_producto" placeholder="Producto o Servicio" readonly>
+                                    <button class="input-group-text btn-info" @click="buscarProducto(0)">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-4 form-group">
+                                <label for="">Cantidad</label>
+                                <input type="number" class="form-control" v-model="venta.items[0].cantidad">
+                            </div>
+                            <div class="col-4 form-group">
+                                <label for="">Monto</label>
+                                <input type="number" class="form-control" :value="Number(venta.items[0].monto).toFixed(2)" readonly>
+                            </div>
+                            <div class="col-4 form-group">
+                                <label for="">Sub total</label>
+                                <input type="number" class="form-control" :value="(item.cantidad*item.monto).toFixed(2)" readonly>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-info mt-4" @click="buscarProducto(0)">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="venta.items[0].tipo=='S'">
+                            <hr>
+                            <div class="row">
+                                
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
             </div>
         </div>
         <div class="table">
@@ -60,9 +101,7 @@
                 class="table-row">
                 <div class="row">
                     <div class="col-1">
-                        <button class="btn btn-info" @click="buscarProducto(index)">
-                            <i class="fas fa-search"></i>
-                        </button>
+                        
                     </div>
                     <div class="col-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
                     <div class="col-4">
@@ -80,7 +119,7 @@
                         </div>
                     </div>
                     <div class="col-1">
-                        <input type="number" class="form-control" v-model="item.cantidad">
+                        
                     </div>
                     <div class="col-2">{{ Number(item.monto).toFixed(2) }}</div>
                     <div class="col-2">
@@ -141,7 +180,6 @@
                             <tr v-for="producto in productos.data">
                                 <td>{{ producto.descripcion }}</td>
                                 <td>{{ producto.tipo }}</td>
-                                <td>{{ Number(producto.precio).toFixed(2) }}</td>
                                 <td>
                                     <button class="btn btn-primary" @click="seleccionar(producto)">
                                         <i class="fas fa-paper-plane"></i>
@@ -162,7 +200,6 @@ export default {
     data() {
         return {
             cuentas: [],
-            clientes: [],
             venta: this.initVenta(), 
             index: 0,
             productos: [],
@@ -185,12 +222,17 @@ export default {
         }
     },
     methods: {
-        getCliente(search){
-            if (search!='') {
-                axios.get(`${url_base}/cliente?type=all&search=${search}`)
+        getCliente(){
+            if ((this.venta.dni+"").length>7) {
+                axios.get(`${url_base}/cliente/${this.venta.dni}`)
                 .then((params)=>{
-                    this.clientes= params.data;
+                    var respuesta= params.data;
+                    this.venta.cliente_id=respuesta.id;
+                    this.venta.descripcion_cliente=`${respuesta.nombres} ${respuesta.ape_paterno} ${respuesta.ape_materno}`;
                 });
+            }else{
+                this.venta.cliente_id=null;
+                this.venta.descripcion_cliente='';
             }
         },
         listarCuentas(){
@@ -266,9 +308,19 @@ export default {
         initVenta(){
             return {
                 cliente_id: '',
+                concepto_id: 'IXS',
                 dni: '',
                 descripcion_cliente: '',
-                items:[],
+                items:[
+                    {
+                        producto_id: '',
+                        codigo: '',
+                        descripcion_producto: '',
+                        cantidad: 1,
+                        monto: 0,
+                        fecha_inicio: moment().format('Y-MM-DD')
+                    }
+                ],
                 descuento: 0,
                 cuenta_id: 1
             }

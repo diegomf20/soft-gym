@@ -25,13 +25,53 @@
                 </a>    
             </div>
         </div>
+        <div class="card">
+            <div class="card-header">
+                Reporte Diario
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-2 form-group">
+                        <label>Seleccionar Día:</label>
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <input type="date" v-model="day" class="form-control">
+                    </div>
+                </div>
+                <a @click="get_producto_diario()" class="btn btn-success mb-3">
+                    <i class="far fa-file-excel"></i> Producto
+                </a>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Descripcion</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="producto in producto_diario">
+                                    <td>{{ producto.codigo }}</td>
+                                    <td>{{ producto.descripcion }}</td>
+                                    <td>{{ producto.total }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+            </div>
+        </div>
     </div>
 </template>
 <script>
 export default {
     data() {
         return {
-            year: moment().format('Y')
+            year: moment().format('Y'),
+            day: moment().format('Y-MM-DD'),
+            producto_diario: []
         }
     },
     methods: {
@@ -40,7 +80,13 @@ export default {
         },
         excel_producto(){
             return `${url_base}/reportes/producto_anual?year=${this.year}`;
+        },
+        get_producto_diario(){
+            axios.get(`${url_base}/reportes/producto_diario?day=${this.day}`).then((params)=> {
+                this.producto_diario=params.data
+            }); 
         }
+
     },
 }
 </script>

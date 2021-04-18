@@ -35,6 +35,8 @@ class ProductoController extends Controller
                                 P.descripcion,
                                 P.marca,
                                 P.precio,
+                                P.tipo,
+                                P.pago,
                                 COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
                         FROM producto P
                         LEFT JOIN stock S on S.producto_id=P.id
@@ -48,6 +50,8 @@ class ProductoController extends Controller
                                 P.descripcion,
                                 P.marca,
                                 P.precio,
+                                P.tipo,
+                                P.pago,
                                 COALESCE(SUM(IF(S.tipo='I',1,-1)*S.cantidad),0) stock 
                         FROM producto P
                         LEFT JOIN stock S on S.producto_id=P.id

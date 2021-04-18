@@ -19,6 +19,7 @@ Route::get('reportes/cuenta', 'ReportesController@cuenta');
 Route::get('reportes/resumen', 'ReportesController@resumen');
 Route::get('reportes/balance_anual', 'ReportesController@balance_anual');
 Route::get('reportes/producto_anual', 'ReportesController@producto_anual');
+Route::get('reportes/producto_diario', 'ReportesController@producto_diario');
 Route::get('reportes/recurrentes', 'ReportesController@recurrentes');
 Route::get('user/{id}/privilegios', 'UsersController@privilegios');
 Route::post('user/{id}/privilegios', 'UsersController@updatePrivilegios');

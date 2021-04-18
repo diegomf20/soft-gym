@@ -179,7 +179,7 @@
                             <div class="col-2">{{ item.telefono }}</div>
                             <div class="col-3">{{ item.email}}</div>
                             <div class="col-1">
-                                <a @click="getCliente(item.dni)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
+                                <a @click="getCliente(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
                             </div>
                             <div class="col-1">
                                 <a @click="listarHistorial(item.id)" type="button" class="text-info"><i class="fas fa-history"></i></a>
@@ -240,6 +240,7 @@ export default {
             }); 
         },
         save(){
+            this.error_cliente=this.initValidate();
             axios.post(`${url_base}/cliente`,this.cliente)
             .then((params)=> {
                 var respuesta=params.data;
@@ -256,7 +257,7 @@ export default {
                     default:
                         break;
                 }
-                this.listar();
+                this.listar(this.clientes.current_page);
             }).catch((error)=>{
                 var response=error.response;
                 if (response.status==422) {
@@ -268,15 +269,16 @@ export default {
                 }
             });
         },
-        getCliente(dni){
-            axios.get(`${url_base}/cliente/${dni}`)
+        getCliente(id){
+            axios.get(`${url_base}/cliente/${id}`)
             .then((params)=>{
                 this.cliente_editar=params.data;
                 $('#modal-editar').modal();
             });
         },
         update(){
-            axios.post(`${url_base}/cliente/${this.cliente_editar.dni}?_method=PUT`,this.cliente_editar)
+            this.error_cliente_editar=this.initValidate();
+            axios.post(`${url_base}/cliente/${this.cliente_editar.id}?_method=PUT`,this.cliente_editar)
             .then((params)=> {
                 var respuesta=params.data;
                 switch (respuesta.status) {

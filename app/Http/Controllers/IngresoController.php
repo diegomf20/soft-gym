@@ -61,7 +61,7 @@ class IngresoController extends Controller
     {
         $cliente=Cliente::where('id',$request->cliente_id)->first();
         $movimiento=new Movimiento();
-        $movimiento->concepto_id='IXC';
+        $movimiento->concepto_id=$request->has('concepto_id') ? $request->concepto_id:'IXC';
         $movimiento->cuenta_id=$request->cuenta_id;
         $movimiento->referencia=$request->referencia.' - '.$cliente->nombres.' '.$cliente->ape_paterno;
         $movimiento->monto=0;
@@ -108,7 +108,7 @@ class IngresoController extends Controller
                     $stock->save();
                     break;
                 case 'S':
-                    if ($producto->pago='M') {
+                    if ($producto->pago=='M') {
                         $fecha_inicio=$item['fecha_inicio'];
                         $membresia=new Membresia();
                         $membresia->ingreso_id=$ingreso->id;
@@ -130,7 +130,6 @@ class IngresoController extends Controller
             "status"=>"OK",
             "message"=>"Ingreso Registrado"
         ]);
-
     }
 
     public function show($id)

@@ -4,6 +4,10 @@ import Dashboard from './app.vue';
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+import vSelect from 'vue-select'
+Vue.component('v-select', vSelect)
+import 'vue-select/dist/vue-select.css';
+
 import swal from 'sweetalert';
 
 
@@ -70,6 +74,10 @@ var routes =[
         path: '/ingreso',
         component: require('./views/Ingreso.vue').default,
     },
+    // {
+    //     path: '/ingreso-rapido',
+    //     component: require('./views/Ingreso.vue').default,
+    // },
     {
         path: '/ingreso/lista',
         component: require('./views/ListaIngreso.vue').default,

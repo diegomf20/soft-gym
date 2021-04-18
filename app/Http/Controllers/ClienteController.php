@@ -13,36 +13,40 @@ class ClienteController extends Controller
 {
     public function index(Request $request)
     {
+        
+
+        $texto_busqueda=explode(" ",$request->search);
+
+        $clientes=Cliente::where(DB::raw("CONCAT(IFNULL(dni,''),' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[0]."%");
+        
+        for ($i=1; $i < count($texto_busqueda); $i++) { 
+            $clientes=$clientes->where(DB::raw("CONCAT(IFNULL(dni,''),' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[$i]."%");
+        }
+        
+        
         switch ($request->type) {
             case 'excel':
                 return (new ClienteExport)->download('cliente.xlsx');
                 break;
-            
+            case 'all':
+                $clientes=$clientes->get();
+                return response()->json($clientes);
+                break;
             default:
-                # code...
+                $clientes=$clientes->paginate(10);
+                return response()->json($clientes);
                 break;
         }
 
-        $texto_busqueda=explode(" ",$request->search);
-
-        $clientes=Cliente::where(DB::raw("CONCAT(dni,' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[0]."%");
-        
-        for ($i=1; $i < count($texto_busqueda); $i++) { 
-            $clientes=$clientes->where(DB::raw("CONCAT(dni,' ',nombres,' ',ape_paterno,' ',ape_materno)"),"like","%".$texto_busqueda[$i]."%");
-        }
-
-        $clientes=$clientes->paginate(5);
-
-        return response()->json($clientes);
     }
 
     public function store(ClienteRequest $request)
     {
         $cliente=new Cliente();
         $cliente->dni=$request->dni;
-        $cliente->nombres=$request->nombres;
-        $cliente->ape_paterno=$request->ape_paterno;
-        $cliente->ape_materno=$request->ape_materno;
+        $cliente->nombres=mb_convert_case($request->nombres, MB_CASE_TITLE, "UTF-8");
+        $cliente->ape_paterno=mb_convert_case($request->ape_paterno, MB_CASE_TITLE, "UTF-8");
+        $cliente->ape_materno=mb_convert_case($request->ape_materno, MB_CASE_TITLE, "UTF-8");
         $cliente->telefono=$request->telefono;
         $cliente->email=$request->email;
         $cliente->direccion=$request->direccion;
@@ -54,18 +58,18 @@ class ClienteController extends Controller
         ]);
     }
 
-    public function show($dni)
+    public function show($id)
     {
-        $cliente=Cliente::where('dni',$dni)->first();
+        $cliente=Cliente::where('id',$id)->first();
         return response()->json($cliente);
     }
 
-    public function update(ClienteEditarRequest $request, $dni)
+    public function update(ClienteEditarRequest $request, $id)
     {
-        $cliente=Cliente::where('dni',$dni)->first();
-        $cliente->nombres=$request->nombres;
-        $cliente->ape_paterno=$request->ape_paterno;
-        $cliente->ape_materno=$request->ape_materno;
+        $cliente=Cliente::where('id',$id)->first();
+        $cliente->nombres=mb_convert_case($request->nombres, MB_CASE_TITLE, "UTF-8");
+        $cliente->ape_paterno=mb_convert_case($request->ape_paterno, MB_CASE_TITLE, "UTF-8");
+        $cliente->ape_materno=mb_convert_case($request->ape_materno, MB_CASE_TITLE, "UTF-8");
         $cliente->telefono=$request->telefono;
         $cliente->email=$request->email;
         $cliente->direccion=$request->direccion;

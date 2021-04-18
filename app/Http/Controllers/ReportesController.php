@@ -191,7 +191,21 @@ class ReportesController extends Controller
                 GROUP BY P.descripcion";
         $data=DB::select($query,[$year]);
         return (new ProductoAnualExport($data))->download("productos_anual_$year.xlsx");
-        
+    }
+
+    public function producto_diario(Request $request){
+        $day=$request->day;
+        $query="SELECT 	p.codigo,
+                        p.descripcion,
+                        SUM(cantidad) total
+                FROM producto P
+                INNER JOIN stock S on P.id=S.producto_id
+                WHERE S.tipo='E'
+                AND DATE(fecha)=?
+                GROUP BY P.descripcion";
+        $data=DB::select($query,[$day]);
+        return response()->json($data);
+        // return (new ProductoAnualExport($data))->download("productos_diario_$year.xlsx");
     }
 
     public function paginate($query,$param,$per_page = 10,$page = 1){

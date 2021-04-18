@@ -24,10 +24,10 @@ class ClienteRequest extends FormRequest
     public function rules()
     {
         return [
-                'dni'=>'required|unique:cliente,dni',
+                // 'dni'=>'unique:cliente,dni',
                 'nombres'=>'required',
                 'ape_paterno'=>'required',
-                'ape_materno'=>'required',
+                // 'ape_materno'=>'required',
                 // 'telefono'=>'required',
                 // 'email'=>'required',
         ];

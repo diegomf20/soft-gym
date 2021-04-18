@@ -48,7 +48,7 @@
             <div class="col-lg-4">
                 <div id="cumpleanios" class="card mb-3">
                     <div class="card-header">
-                        <h6 class="mb-0"><i class="fas fa-birthday-cake"></i> Membresias por Vencer y vencidas</h6>
+                        <h6 class="mb-0"><i class="fas fa-users"></i> Membresias por Vencer y vencidas</h6>
                     </div>
                     <div class="card-body scrollable">
                         <ul class="list-group">
