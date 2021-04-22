@@ -24,14 +24,14 @@ class IngresoController extends Controller
         $query="SELECT 	I.id,
                         DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
                         C.dni,
-                        CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno) descripcion_cliente,
+                        IFNULL(C.id=null,'Cliente Anonimo',CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno)) descripcion_cliente,
                         I.descuento,
                         I.total,
                         M.estado,
                         M.creado_por,
                         M.eliminado_por
                 FROM ingreso I
-                INNER JOIN cliente C on C.id=I.cliente_id
+                LEFT JOIN cliente C on C.id=I.cliente_id
                 INNER JOIN movimiento M on M.id=I.movimiento_id
                 WHERE M.fecha BETWEEN ? AND ?
                 ORDER BY I.created_at DESC";
@@ -126,6 +126,48 @@ class IngresoController extends Controller
         $movimiento->save();
         $ingreso->total=$total;
         $ingreso->save();
+        return response()->json([
+            "status"=>"OK",
+            "message"=>"Ingreso Registrado"
+        ]);
+    }
+
+    public function store_rapic(Request $request){
+        $producto_id=$request->producto_id;
+        $monto=$request->monto;
+        $cantidad=$request->cantidad;
+        $total=$cantidad*$monto;
+
+        $movimiento=new Movimiento();
+        $movimiento->concepto_id=$request->has('concepto_id') ? $request->concepto_id : 'IXC';
+        $movimiento->cuenta_id=$request->cuenta_id;
+        $movimiento->referencia='Ingreso Rapido - Cliente Anonimo';
+        $movimiento->monto=$total;
+        $movimiento->fecha=Carbon::now();
+        $movimiento->creado_por=$request->user;
+        $movimiento->save();
+        $ingreso=new Ingreso();
+        $ingreso->descuento=$request->descuento;
+        $ingreso->total=$total;
+        $ingreso->movimiento_id=$movimiento->id;
+        $ingreso->cliente_id=$request->cliente_id;
+        $ingreso->save();
+        //detalle de venta
+        $detalle=new DetalleIngreso();
+        $detalle->ingreso_id=$ingreso->id;
+        $detalle->producto_id=$producto_id;
+        $detalle->monto=$monto;
+        $detalle->cantidad=$cantidad;
+        $detalle->save();
+        //movimiento de stock
+        $stock=new Stock();
+        $stock->producto_id=$producto_id;
+        $stock->tipo="E";
+        $stock->referencia_id=$ingreso->id;
+        $stock->cantidad=$cantidad;
+        $stock->fecha=Carbon::now();
+        $stock->save();
+
         return response()->json([
             "status"=>"OK",
             "message"=>"Ingreso Registrado"

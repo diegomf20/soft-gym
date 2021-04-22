@@ -74,10 +74,10 @@ var routes =[
         path: '/ingreso',
         component: require('./views/Ingreso.vue').default,
     },
-    // {
-    //     path: '/ingreso-rapido',
-    //     component: require('./views/Ingreso.vue').default,
-    // },
+    {
+        path: '/ingreso-rapido',
+        component: require('./views/IngresoRapido.vue').default,
+    },
     {
         path: '/ingreso/lista',
         component: require('./views/ListaIngreso.vue').default,

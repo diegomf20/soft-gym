@@ -26,6 +26,7 @@ Route::post('user/{id}/privilegios', 'UsersController@updatePrivilegios');
 Route::post('user/contrasenia', 'UsersController@contrasenia');
 Route::post('user/reset', 'UsersController@reset');
 Route::get('cliente/{id}/historial', 'ClienteController@historial');
+Route::post('ingreso/rapic', 'IngresoController@store_rapic');
 Route::resources([
     'modulo'=>'ModuloController',
     'user'=>'UsersController',

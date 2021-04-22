@@ -20,7 +20,7 @@ class CreateIngresoTable extends Migration
             $table->decimal('descuento', 8, 2);
             $table->decimal('total', 8, 2);
             $table->integer('movimiento_id');
-            $table->integer('cliente_id');
+            $table->integer('cliente_id')->nullable();
             $table->timestamps();
         });
     }
