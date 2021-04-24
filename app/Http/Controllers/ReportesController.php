@@ -17,15 +17,15 @@ class ReportesController extends Controller
                         C.dni,
                         CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno) descripcion_cliente,
                         P.descripcion descripcion_producto,
-                        DATEDIFF(MAX(fecha_fin),?) vencimiento
+                        DATEDIFF(MAX(fecha_fin),CURDATE()) vencimiento
                 FROM membresia M 
                 INNER JOIN ingreso I ON M.ingreso_id=I.id
                 INNER JOIN cliente C ON I.cliente_id=C.id
                 INNER JOIN producto P ON P.id=M.producto_id
-                WHERE M.fecha_fin >= ?
+                WHERE M.fecha_fin >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
                 GROUP BY CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno), dni,P.descripcion
                 ORDER BY vencimiento ASC";
-        $membresias=DB::select(DB::raw("$query"),[$hoy,Carbon::parse($hoy)->subDays(7)]);
+        $membresias=DB::select(DB::raw("$query"));
         return response()->json($membresias);
     }
 

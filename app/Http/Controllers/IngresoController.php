@@ -22,9 +22,9 @@ class IngresoController extends Controller
     {
         
         $query="SELECT 	I.id,
-                        DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
+                        DATE_FORMAT(M.fecha,'%d/%m/%Y') fecha,
                         C.dni,
-                        IFNULL(C.id=null,'Cliente Anonimo',CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno)) descripcion_cliente,
+                        IF(ISNULL(cliente_id),'Cliente Anonimo',CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno)) descripcion_cliente,
                         I.descuento,
                         I.total,
                         M.estado,
@@ -34,7 +34,7 @@ class IngresoController extends Controller
                 LEFT JOIN cliente C on C.id=I.cliente_id
                 INNER JOIN movimiento M on M.id=I.movimiento_id
                 WHERE M.fecha BETWEEN ? AND ?
-                ORDER BY I.created_at DESC";
+                ORDER BY M.fecha DESC, M.id DESC";
         switch ($request->type) {
             case 'excel':
                 $data=DB::select($query, [
@@ -63,9 +63,9 @@ class IngresoController extends Controller
         $movimiento=new Movimiento();
         $movimiento->concepto_id=$request->has('concepto_id') ? $request->concepto_id:'IXC';
         $movimiento->cuenta_id=$request->cuenta_id;
-        $movimiento->referencia=$request->referencia.' - '.$cliente->nombres.' '.$cliente->ape_paterno;
+        $movimiento->referencia=$request->referencia.' - '.( $cliente!=null ? $cliente->nombres.' '.$cliente->ape_paterno:'');
         $movimiento->monto=0;
-        $movimiento->fecha=Carbon::now();
+        $movimiento->fecha=$request->has('fecha') ? $request->fecha : Carbon::now();
         $movimiento->creado_por=$request->user;
         $movimiento->save();
         $ingreso=new Ingreso();
@@ -143,11 +143,11 @@ class IngresoController extends Controller
         $movimiento->cuenta_id=$request->cuenta_id;
         $movimiento->referencia='Ingreso Rapido - Cliente Anonimo';
         $movimiento->monto=$total;
-        $movimiento->fecha=Carbon::now();
+        $movimiento->fecha=$request->has('fecha') ? $request->fecha : Carbon::now();
         $movimiento->creado_por=$request->user;
         $movimiento->save();
         $ingreso=new Ingreso();
-        $ingreso->descuento=$request->descuento;
+        $ingreso->descuento=0;
         $ingreso->total=$total;
         $ingreso->movimiento_id=$movimiento->id;
         $ingreso->cliente_id=$request->cliente_id;
@@ -170,7 +170,7 @@ class IngresoController extends Controller
 
         return response()->json([
             "status"=>"OK",
-            "message"=>"Ingreso Registrado"
+            "message"=>"Ingreso Rápido Registrado"
         ]);
     }
 
@@ -178,7 +178,7 @@ class IngresoController extends Controller
     {   
         $query="SELECT 	I.id,
                         C.dni,
-                        CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno) descripcion_cliente,
+                        IF(ISNULL(cliente_id),'Cliente Anonimo',CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno)) descripcion_cliente,
                         I.descuento,
                         I.total,
                         DATE_FORMAT(I.created_at,'%d/%m/%Y %h:%i %p') fecha,
@@ -186,7 +186,7 @@ class IngresoController extends Controller
                         M.creado_por,
                         M.eliminado_por
                 FROM ingreso I
-                INNER JOIN cliente C on C.id=I.cliente_id
+                LEFT JOIN cliente C on C.id=I.cliente_id
                 INNER JOIN movimiento M on M.id=I.movimiento_id
                 WHERE I.id=?";
         $ingreso=DB::select(DB::raw($query), [$id])[0];

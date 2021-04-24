@@ -24,7 +24,7 @@ class IngresoRequest extends FormRequest
     public function rules()
     {
         return [
-                'cliente_id'=>'required',
+                //'cliente_id'=>'required',
                 'cuenta_id'=>'required',
         ];
     }

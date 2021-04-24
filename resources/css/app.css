@@ -237,3 +237,7 @@ nav{
     border-bottom-left-radius:  12px;
     border-bottom-right-radius:  12px;
 }
+
+.vs__search, .vs__search:focus{
+    margin: 10px 0 0!important;
+}

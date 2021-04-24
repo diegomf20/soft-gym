@@ -48,6 +48,11 @@
                                     Nuevo Ingreso
                                 </router-link>
                             </li>
+                            <li v-if="existe('/ingreso-rapido')">
+                                <router-link class="nav-link" :to="{ path: '/ingreso-rapido' }" replace>
+                                    Ingreso Rápido
+                                </router-link>
+                            </li>
                             <li v-if="existe('/ingreso/lista')">
                                 <router-link class="nav-link" to="/ingreso/lista">
                                     Lista de Ingresos

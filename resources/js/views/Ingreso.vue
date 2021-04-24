@@ -4,9 +4,18 @@
             <h1 class="card-title">Nuevo Ingreso</h1>
         </nav>
         <div class="row">
+            <div class="col-sm-2">
+                <label for="">Fecha:</label>
+                <input  class="form-control" type="date" v-model="venta.fecha">
+            </div>
             <div class="col-sm-5">
-                <label for="">Nombres y apellidos: </label>
+                <label for="">Nombres y apellidos ( <input 
+                                        type="checkbox" 
+                                        id="checkbox" 
+                                        v-model="anonimo" 
+                                        @change=change_anonimo> Anonimo ): </label>
                 <v-select 
+                        :disabled="anonimo"
                         :reduce="cliente => cliente.id"
                         label="nombres"
                         :filterable="false" 
@@ -24,14 +33,10 @@
                     </template>
                 </v-select>
                 <span class="text-danger">{{ error_ingreso.cliente_id }}</span>
-                <!-- <div class="input-group">
-                    <input type="text" class="form-control" v-model="venta.descripcion_cliente" disabled>
-                    <button class="input-group-text btn btn-primary">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div> -->
+                
             </div>
-            <div class="col-sm-4">
+            
+            <div class="col-sm-2">
                 <label for="">Cuenta</label>
                 <select class="form-control" v-model="venta.cuenta_id">
                     <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
@@ -167,7 +172,8 @@ export default {
             index: 0,
             productos: [],
             error_ingreso:{},
-            search: ''
+            search: '',
+            anonimo: false
         }
     },
     mounted() {
@@ -185,6 +191,11 @@ export default {
         }
     },
     methods: {
+        change_anonimo(){
+            if(this.anonimo){
+                this.venta.cliente_id=null;
+            }
+        },
         getCliente(search){
             if (search!='') {
                 axios.get(`${url_base}/cliente?type=all&search=${search}`)
@@ -230,38 +241,45 @@ export default {
             this.search='';
         },
         save(){
-            this.error_ingreso={};
-            axios.post(`${url_base}/ingreso`,this.venta)
-            .then((params)=> {
-                var respuesta=params.data;
-                switch (respuesta.status) {
-                    case "OK":
-                        swal({
-                            text: respuesta.message,
-                            icon: "success"
-                        });
-                        this.venta=this.initVenta();
-                        break;
-                    case "WARNING":
-                        swal({
-                            text: respuesta.message,
-                            icon: "warning"
-                        });
-                        break;
+            if(!this.anonimo&&(this.venta.cliente_id===null||this.venta.cliente_id==='')){
+                swal({
+                    text: 'Seleccione Cliente',
+                    icon: "warning"
+                });
+            }else{
+                this.error_ingreso={};
+                axios.post(`${url_base}/ingreso`,this.venta)
+                .then((params)=> {
+                    var respuesta=params.data;
+                    switch (respuesta.status) {
+                        case "OK":
+                            swal({
+                                text: respuesta.message,
+                                icon: "success"
+                            });
+                            this.venta=this.initVenta();
+                            break;
+                        case "WARNING":
+                            swal({
+                                text: respuesta.message,
+                                icon: "warning"
+                            });
+                            break;
 
-                    default:
-                        break;
-                }
-            }).catch((error)=>{
-                var response=error.response;
-                if (response.status==422) {
-                    var errors=response.data.errors;
-                    for(var i in errors){
-                        errors[i]=errors[i][0];
+                        default:
+                            break;
                     }
-                    this.error_ingreso=errors
-                }
-            });
+                }).catch((error)=>{
+                    var response=error.response;
+                    if (response.status==422) {
+                        var errors=response.data.errors;
+                        for(var i in errors){
+                            errors[i]=errors[i][0];
+                        }
+                        this.error_ingreso=errors
+                    }
+                });
+            }
         },
         initVenta(){
             return {
@@ -270,7 +288,8 @@ export default {
                 descripcion_cliente: '',
                 items:[],
                 descuento: 0,
-                cuenta_id: 1
+                cuenta_id: 1,
+                fecha: moment().format('Y-MM-DD')
             }
         }
     },
