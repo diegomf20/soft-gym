@@ -11,11 +11,11 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-sm-4 col-lg-3 form-group">
                                 <label>Fecha Inicio:</label>
                                 <input  class="form-control" type="date" v-model="venta.fecha">
                             </div>
-                            <div class="col-lg-3 form-group">
+                            <div class="col-sm-8 col-lg-3 form-group">
                                 <label for="">Cuenta</label>
                                 <select class="form-control" v-model="venta.cuenta_id">
                                     <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
@@ -43,7 +43,9 @@
                                 </div>
                             </div>
                             <div class="col-12 text-right">
-                                <button class="btn btn-primary" @click="save()">GUARDAR</button>
+                                <button class="btn btn-primary" @click="save()">
+                                    GUARDAR (S/. {{ Number(venta.cantidad*venta.monto).toFixed(2) }})
+                                </button>
                             </div>
                         </div>
                     </div>

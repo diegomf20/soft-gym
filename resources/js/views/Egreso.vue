@@ -4,64 +4,78 @@
             <h1 class="card-title">Nuevo Egreso General</h1>
         </nav>
         <div class="row">
-            <div class="col-sm-3">
+            <div class="form-group col-sm-6 col-lg-3">
                 <label for="">Concepto</label>
                 <select class="form-control" v-model="venta.concepto_id">
                     <option v-for="concepto in conceptos" :value="concepto.id">{{ concepto.descripcion }}</option>
                 </select>
                 <span class="text-danger">{{ error_egreso.concepto_id }}</span>
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-6 col-lg-3">
                 <label for="">Cuenta</label>
                 <select class="form-control" v-model="venta.cuenta_id">
                     <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
                 </select>
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-6 col-lg-3">
                 <label for="">Fecha</label>
                 <input type="date" v-model="venta.fecha" class="form-control">
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-6 col-lg-3">
                 <label for="">Referencia (**)</label>
                 <input type="text" class="form-control">
             </div>
         </div>
-        <div class="table">
+        <div class="table table-responsive">
             <div class="table-header">
                 <div class="row">
-                    <div class="col-1">Buscar</div>
-                    <div class="col-1">Tipo</div>
-                    <div class="col-4">Descripción</div>
-                    <div class="col-1">Cantidad</div>
-                    <div class="col-2">Monto</div>
-                    <div class="col-2">Sub Total</div>
-                    <div class="col-1">Quitar</div>
+                    <div class="col-1 text-center">Quitar</div>
+                    <div class="col-1 text-center">Buscar</div>
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col-1">Tipo</div>
+                            <div class="col-6">Descripción</div>
+                            <div class="col-1">Cantidad</div>
+                            <div class="col-2">Monto</div>
+                            <div class="col-2">Sub Total</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div v-for="(item,index) in venta.items" class="table-row">
                 <div class="row">
-                    <div class="col-1">
-                        <button class="btn btn-info" @click="buscarProducto(index)">
-                            <i class="fas fa-search"></i>
-                        </button>
+                    <div class="col-3 col-lg-2 text-center">
+                        <div class="row">
+                            <div class="col-lg-6 mb-sm">
+                                <a @click="removeItem(index)" type="button" class="btn btn-danger">X</a>
+                            </div>
+                            <div class="col-lg-6">
+                                <button class="btn btn-info" @click="buscarProducto(index)">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
-                    <div class="col-4">
-                        <input type="text" v-model="item.descripcion">
-                    </div>
-                    <div class="col-1">
-                        <input type="number" class="form-control" v-model="item.cantidad">
-                    </div>
-                    <div class="col-2">
-                        <input type="text" v-model="item.monto" class="form-control">
-                        <!-- {{ Number(item.monto).toFixed(2) }} -->
-                    </div>
-                    <div class="col-2">
-                        {{(item.cantidad*item.monto).toFixed(2)}}
-                    </div>
-                    <div class="col-1">
-                        <a @click="removeItem(index)" type="button" class="btn btn-danger">X</a>
-                        <!-- <a @click="getcuenta(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a> -->
+                    <div class="col-9 col-lg-10">
+                        <div class="row">
+                            <div class="col-sm-3 col-lg-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
+                            <div class="mb-sm col-sm-9 col-lg-6">
+                                <input type="text" class="form-control form-control-sm" v-model="item.descripcion">
+                            </div>
+                            <div class="col-4 col-lg-1">
+                                <label for="">Cantidad</label>
+                                <input type="number" class="form-control form-control-sm" v-model="item.cantidad">
+                            </div>
+                            <div class="col-4 col-lg-2">
+                                <label for="">Monto</label>
+                                <input type="text" v-model="item.monto" class="form-control form-control-sm">
+                                <!-- {{ Number(item.monto).toFixed(2) }} -->
+                            </div>
+                            <div class="col-4 col-lg-2">
+                                <label for="">Subtotal</label>
+                                {{(item.cantidad*item.monto).toFixed(2)}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,7 +86,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-4 form-group">
                 <button class="btn btn-primary" @click="addItem">+ Agregar Item</button>
             </div>
             

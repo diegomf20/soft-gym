@@ -1,6 +1,7 @@
 <template>
     <div class="wrapper lite">
-        <div class="sidebar">
+        <div class="sidebar-background" :class="open ? 'show' : ''" @click="navbar"></div>
+        <div class="sidebar" :class="open ? 'show' : ''">
             <div class="sidebar-header">
                 <img src="/logo.png">
             </div>
@@ -21,7 +22,7 @@
                 </div>
                 <ul class="nav-list">
                     <li>
-                        <router-link class="nav-link" to="/">
+                        <router-link v-on:click.native="navbar" class="nav-link" to="/">
                             <div class="nav-icon">
                                 <i class="fas fa-chart-pie"></i>
                             </div>
@@ -44,17 +45,17 @@
                     <li v-if="existe('/ingreso')||existe('/ingreso/lista')">
                         <ul class="collapse nav-list" id="collapseIngresos">
                             <li v-if="existe('/ingreso')">
-                                <router-link class="nav-link" :to="{ path: '/ingreso' }" replace>
+                                <router-link v-on:click.native="navbar" class="nav-link" :to="{ path: '/ingreso' }" replace>
                                     Nuevo Ingreso
                                 </router-link>
                             </li>
                             <li v-if="existe('/ingreso-rapido')">
-                                <router-link class="nav-link" :to="{ path: '/ingreso-rapido' }" replace>
+                                <router-link v-on:click.native="navbar" class="nav-link" :to="{ path: '/ingreso-rapido' }" replace>
                                     Ingreso Rápido
                                 </router-link>
                             </li>
                             <li v-if="existe('/ingreso/lista')">
-                                <router-link class="nav-link" to="/ingreso/lista">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/ingreso/lista">
                                     Lista de Ingresos
                                 </router-link>
                             </li>
@@ -74,12 +75,12 @@
                         </a>
                         <ul class="collapse nav-list" id="collapseEgresos">
                             <li v-if="existe('/egreso')">
-                                <router-link class="nav-link" to="/egreso">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/egreso">
                                     <span>Egresos</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/egreso/lista')">
-                                <router-link class="nav-link" to="/egreso/lista">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/egreso/lista">
                                     Lista de Egresos
                                 </router-link>
                             </li>
@@ -88,7 +89,7 @@
                     <!-- <li v-if=""> -->
                     <!-- </li> -->
                     <li v-if="existe('/membresia')">
-                        <router-link class="nav-link" to="/membresia">
+                        <router-link v-on:click.native="navbar" class="nav-link" to="/membresia">
                             <div class="nav-icon">
                                 <i class="fas fa-calculator"></i>
                             </div>
@@ -111,32 +112,32 @@
                     <li>
                         <ul class="collapse nav-list" id="collapseTablas">
                             <li v-if="existe('/producto')">
-                                <router-link class="nav-link" to="/producto">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/producto">
                                     <span>Productos</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/servicio')">
-                                <router-link class="nav-link" to="/servicio">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/servicio">
                                     <span>Servicios</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/cliente')">
-                                <router-link class="nav-link" to="/cliente">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/cliente">
                                     <span>Clientes</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/concepto')">
-                                <router-link class="nav-link" to="/concepto">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/concepto">
                                     <span>Conceptos</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/cuenta')">
-                                <router-link class="nav-link" to="/cuenta">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/cuenta">
                                     <span>Cuentas</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/user')">
-                                <router-link class="nav-link" to="/user">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/user">
                                     <span>Usuarios</span>
                                 </router-link>
                             </li>
@@ -158,28 +159,36 @@
                     <li>
                         <ul class="collapse nav-list" id="collapseReportes">
                             <li v-if="existe('/reportes/balance-periodo')">
-                                <router-link class="nav-link" to="/reportes/balance-periodo">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/reportes/balance-periodo">
                                     <span>Balance por Periodo</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/reportes/cuenta')">
-                                <router-link class="nav-link" to="/reportes/cuenta">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/reportes/cuenta">
                                     <span>Cuentas</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/reportes/recurrente')">
-                                <router-link class="nav-link" to="/reportes/recurrente">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/reportes/recurrente">
                                     <span>Recurrente</span>
                                 </router-link>
                             </li>
                             <li v-if="existe('/reportes/otros')">
-                                <router-link class="nav-link" to="/reportes/otros">
+                                <router-link v-on:click.native="navbar" class="nav-link" to="/reportes/otros">
                                     <span>Otros</span>
                                 </router-link>
                             </li>
                         </ul>
                     </li>
                 </ul>
+            </div>
+        </div>
+        <div class="nav-header">
+            <div class="button">
+                <button @click="navbar()" class="btn btn-primary"><i class="fas fa-bars"></i></button>
+            </div>
+            <div class="title">
+                <h5 class="mb-0">BATHOR</h5>  
             </div>
         </div>
         <div class="content">
@@ -226,10 +235,14 @@ export default {
             contrasenia: {
                 actual: '',
                 nueva: ''
-            }
+            },
+            open: false
         }
     },
     methods: {
+        navbar(){
+            (this.open) ? this.open=false: this.open=true; 
+        },
         existe(val){
             for (let i = 0; i < this.modulos.length; i++) {
                 if (this.modulos[i].ruta==val) {

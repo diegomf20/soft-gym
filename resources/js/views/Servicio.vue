@@ -79,16 +79,16 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="row">
-                    <div class="col-sm-6 col-lg-8">
+                    <div class="form-group col-sm-6 col-lg-8">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
                             Nuevo
                         </button>
                     </div>
-                    <div class="col-sm-6 col-lg-4">
+                    <div class="form-group col-sm-6 col-lg-4">
                         <input class="form-control" placeholder="search" @keyup="listar()" v-model="search">
                     </div>
                 </div>
-                <div class="table">
+                <div class="table table-responsive">
                     <div class="table-header">
                         <div class="row">
                             <div class="col-2">Codigo</div>
@@ -100,11 +100,11 @@
                     </div>
                     <div v-for="item in productos.data" class="table-row">
                         <div class="row">
-                            <div class="col-2">{{ item.codigo }}</div>
-                            <div class="col-5">{{ item.descripcion }}</div>
-                            <div class="col-2">{{ (item.pago=='U')?'Único':'Mensual' }}</div>
-                            <div class="col-2">{{ item.precio}}</div>
-                            <div class="col-1">
+                            <div class="col-lg-2"><label>Código:</label>{{ item.codigo }}</div>
+                            <div class="col-lg-5"><label>Descripción:</label>{{ item.descripcion }}</div>
+                            <div class="col-lg-2"><label>Pago:</label>{{ (item.pago=='U')?'Único':'Mensual' }}</div>
+                            <div class="col-lg-2"><label>Precio</label>{{ item.precio}}</div>
+                            <div class="col-lg-1 text-center">
                                 <a @click="getProducto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
                             </div>
                         </div>

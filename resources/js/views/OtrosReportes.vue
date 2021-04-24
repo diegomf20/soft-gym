@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div class="container-fluid">
         <nav>
             <h1 class="card-title">Otros Reportes</h1>
             <!-- <h1 class="card-comment mb-0">Control de Stock</h1> -->
         </nav>
-        <div class="card">
+        <div class="card mb-3">
             <div class="card-header">
                 <h5>Reporte Anuales</h5>
             </div>
@@ -17,10 +17,10 @@
                         <input type="number" v-model="year" class="form-control">
                     </div>
                 </div>
-                <a :href="excel_balance()" class="btn btn-success">
+                <a :href="excel_balance()" class="btn btn-success mb-sm">
                     <i class="far fa-file-excel"></i> Balance Anual
                 </a>    
-                <a :href="excel_producto()" class="btn btn-success">
+                <a :href="excel_producto()" class="btn btn-success mb-sm">
                     <i class="far fa-file-excel"></i> Salida Productos Anual
                 </a>    
             </div>
@@ -31,16 +31,17 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-sm-2 form-group">
+                    <div class="col-4 col-sm-6 col-lg-3 form-group">
                         <label>Seleccionar Día:</label>
                     </div>
-                    <div class="col-sm-2 form-group">
+                    <div class="col-8 col-sm-6 col-lg-2 form-group">
                         <input type="date" v-model="day" class="form-control">
                     </div>
+                    
                 </div>
-                <a @click="get_producto_diario()" class="btn btn-success mb-3">
+                <button @click="get_producto_diario()" class="btn btn-success mb-3">
                     <i class="far fa-file-excel"></i> Producto
-                </a>
+                </button>
                 <div class="row">
                     <div class="col-lg-4">
                         <table class="table table-bordered">

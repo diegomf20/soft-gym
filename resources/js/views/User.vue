@@ -131,16 +131,16 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="row">
-                    <div class="col-sm-6 col-lg-8">
+                    <div class="form-group col-sm-6 col-lg-8">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
                             Nuevo
                         </button>
                     </div>
-                    <div class="col-sm-6 col-lg-4">
+                    <div class="form-group col-sm-6 col-lg-4">
                         <input class="form-control" placeholder="search" v-model="search" @keyup="listar()">
                     </div>
                 </div>
-                <div class="table">
+                <div class="table table-responsive">
                     <div class="table-header">
                         <div class="row">
                             <div class="col-2">Usuario</div>
@@ -152,15 +152,15 @@
                     </div>
                     <div v-for="item in users.data" class="table-row">
                         <div class="row">
-                            <div class="col-2">{{ item.usuario }}</div>
-                            <div class="col-4">{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
-                            <div class="col-2">
+                            <div class="col-lg-2"><label>Usuario:</label>{{ item.usuario }}</div>
+                            <div class="col-lg-4"><label>Descripción:</label>{{ item.nombres + ' ' + item.ape_paterno+ ' ' + item.ape_materno }}</div>
+                            <div class="col-lg-2"><label>Editar:</label>
                                 <a @click="getuser(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
                             </div>
-                            <div class="col-2">
+                            <div class="col-lg-2"><label>Privilegios:</label>
                                 <a @click="getPrivilegios(item.id)" type="button" class="text-info"><i class="fas fa-user-lock"></i></a>
                             </div>
-                            <div class="col-2">
+                            <div class="col-lg-2"><label>Resetear:</label>
                                 <a @click="abrirReset(item.usuario)" type="button" class="text-info"><i class="fas fa-key"></i></a>
                             </div>
                         </div>

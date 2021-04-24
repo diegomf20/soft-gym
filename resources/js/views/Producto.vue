@@ -74,7 +74,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="row">
-                    <div class="col-sm-6 col-lg-8">
+                    <div class="form-group col-sm-6 col-lg-8">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nuevo">
                             Nuevo
                         </button>
@@ -82,14 +82,14 @@
                             <i class="far fa-file-excel"></i> Exportar
                         </a>
                     </div>
-                    <div class="col-sm-6 col-lg-4">
+                    <div class="form-group col-sm-6 col-lg-4">
                         <input class="form-control" placeholder="search" @keyup="listar()" v-model="search">
                     </div>
                 </div>
-                <div class="table">
+                <div class="table table-responsive">
                     <div class="table-header">
                         <div class="row">
-                            <div class="col-2">Codigo</div>
+                            <div class="col-2">Código</div>
                             <div class="col-4">Descripción</div>
                             <div class="col-2">Marca</div>
                             <div class="col-2">Precio Venta</div>
@@ -99,12 +99,12 @@
                     </div>
                     <div v-for="item in productos.data" class="table-row">
                         <div class="row">
-                            <div class="col-2">{{ item.codigo }}</div>
-                            <div class="col-4">{{ item.descripcion }}</div>
-                            <div class="col-2">{{ item.marca }}</div>
-                            <div class="col-2">{{ item.precio}}</div>
-                            <div class="col-1">{{ item.stock }}</div>
-                            <div class="col-1">
+                            <div class="col-lg-2"><label for="">Código:</label>{{ item.codigo }}</div>
+                            <div class="col-lg-4"><label for="">Descripción:</label>{{ item.descripcion }}</div>
+                            <div class="col-lg-2"><label for="">Marca:</label>{{ item.marca }}</div>
+                            <div class="col-lg-2"><label for="">Precio:</label>{{ item.precio}}</div>
+                            <div class="col-lg-1"><label for="">Stock:</label>{{ item.stock }}</div>
+                            <div class="col-lg-1 text-center">
                                 <a @click="getProducto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
                             </div>
                         </div>

@@ -4,19 +4,19 @@
             <h1 class="card-title">CLIENTES RECURRENTES</h1>
         </nav>
         <div class="row mb-3">
-            <div class="col-sm-2">
+            <div class="form-group col-sm-2">
                 <b for="">Fecha Inicio:</b>
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-3">
                 <input type="date" class="form-control" v-model="fecha_inicio">
             </div>
-            <div class="col-sm-2">
+            <div class="form-group col-sm-2">
                 <b for="">Fecha Fin:</b>
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-3">
                 <input type="date" class="form-control" v-model="fecha_fin">
             </div>
-            <div class="col-sm-2">
+            <div class="form-group col-sm-2">
                 <button class="btn btn-danger form-control" @click="listar()">
                     Buscar
                 </button>
@@ -27,16 +27,16 @@
                 <div class="table">
                     <div class="table-header">
                         <div class="row">
-                            <div class="col-2">Codigo</div>
-                            <div class="col-4">Cliente</div>
+                            <!-- <div class="col-2">Codigo</div> -->
+                            <div class="col-6">Cliente</div>
                             <div class="col-3">Servicio / Venta</div>
                             <div class="col-3">Total</div>
                         </div>
                     </div>
                     <div v-for="item in data" class="table-row">
                         <div class="row">
-                            <div class="col-2">{{ item.dni }}</div>
-                            <div class="col-4">{{ item.descripcion_cliente }}</div>
+                            <!-- <div class="col-2">{{ item.dni }}</div> -->
+                            <div class="col-6">{{ item.descripcion_cliente }}</div>
                             <div class="col-3">{{ item.servicios_ventas }}</div>
                             <div class="col-3">{{ item.total }}</div>
                         </div>

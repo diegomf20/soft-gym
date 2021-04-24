@@ -10,7 +10,16 @@ use Carbon\Carbon;
 
 class ReportesController extends Controller
 {
-    public function membresias(){
+    public function membresias(Request $request){
+
+        $texto_busqueda=explode(" ",$request->search);
+        
+        $sql_search="AND CONCAT(nombres,' ',ape_paterno,' ',ape_materno) like '%".$texto_busqueda[0]."%'";
+        for ($i=1; $i < count($texto_busqueda); $i++) { 
+            $sql_search=$sql_search." AND CONCAT(nombres,' ',ape_paterno,' ',ape_materno) like '%".$texto_busqueda[$i]."%'";
+        }
+
+
         $hoy=Carbon::now()->format('Y-m-d');
         $query="SELECT 	MAX(M.fecha_inicio) fecha_inicio,
                         MAX(M.fecha_fin) fecha_fin,
@@ -23,6 +32,7 @@ class ReportesController extends Controller
                 INNER JOIN cliente C ON I.cliente_id=C.id
                 INNER JOIN producto P ON P.id=M.producto_id
                 WHERE M.fecha_fin >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+                $sql_search
                 GROUP BY CONCAT(C.nombres,' ',C.ape_paterno,' ',C.ape_materno), dni,P.descripcion
                 ORDER BY vencimiento ASC";
         $membresias=DB::select(DB::raw("$query"));
@@ -38,7 +48,7 @@ class ReportesController extends Controller
                 INNER JOIN ingreso I on C.id=I.cliente_id
                 WHERE I.created_at>=?
                 AND I.created_at<=?
-                GROUP BY dni
+                GROUP BY C.id
                 ORDER BY total DESC";
         $data=DB::select(DB::raw("$query"),[
             $request->fecha_inicio,

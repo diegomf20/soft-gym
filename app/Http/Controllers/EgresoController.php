@@ -70,7 +70,7 @@ class EgresoController extends Controller
                 AND M.id=?
                 ORDER BY fecha DESC, id DESC";
         $egreso=DB::select(DB::raw($query), [$id])[0];
-        $egreso->detalles=DetalleEgreso::where('id',$id)->get();
+        $egreso->detalles=DetalleEgreso::where('movimiento_id',$id)->get();
         
         return response()->json($egreso);
     }

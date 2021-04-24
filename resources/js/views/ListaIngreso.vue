@@ -5,35 +5,35 @@
         </nav>
         <div class="row">
             <div class="col-sm-12">
-                <div class="row mb-3">
-                    <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-lg-8">
                         <div class="row">
-                            <div class="col-sm-3">
+                            <div class="mb-3 col-sm-6 col-lg-3">
                                 <b for="">Fecha Inicio:</b>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="mb-3 col-sm-6 col-lg-3">
                                 <input type="date" class="form-control" v-model="fecha_inicio">
                             </div>
-                            <div class="col-sm-3">
+                            <div class="mb-3 col-sm-6 col-lg-3">
                                 <b for="">Fecha Fin:</b>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="mb-3 col-sm-6 col-lg-3">
                                 <input type="date" class="form-control" v-model="fecha_fin">
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="mb-3 col-sm-6 col-lg-2">
                         <button class="btn btn-danger form-control" @click="listar()">
                             Buscar
                         </button>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="mb-3 col-sm-6 col-lg-2">
                         <a class="btn btn-success form-control" :href="excel()">
                             Descargar
                         </a>
                     </div>
                 </div>
-                <div class="table">
+                <div class="table table-responsive">
                     <div class="table-header">
                         <div class="row">
                             <div class="col-2">Fecha</div>
@@ -51,9 +51,9 @@
                         <div class="row">
                             <div class="col-sm-2"><label>Fecha:</label>{{ item.fecha }}</div>
                             <div class="col-sm-2"><label>DNI:</label>{{ item.dni }}</div>
-                            <div class="col-sm-3">{{ item.descripcion_cliente }}</div>
-                            <div class="col-sm-2">{{ item.descuento}}</div>
-                            <div class="col-sm-2">{{ item.total }}</div>
+                            <div class="col-sm-3"><label>Cliente:</label>{{ item.descripcion_cliente }}</div>
+                            <div class="col-sm-2"><label>Descuento:</label>{{ item.descuento}}</div>
+                            <div class="col-sm-2"><label>Cliente:</label>{{ item.total }}</div>
                             <div class="col-sm-1 text-center">
                                 <a  @click="ver(item.id)"
                                     class="text-info">

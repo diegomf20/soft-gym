@@ -71,16 +71,16 @@
                 <div class="table">
                     <div class="table-header">
                         <div class="row">
-                            <div class="col-2">N°</div>
-                            <div class="col-5">Descripción</div>
-                            <div class="col-1">Editar</div>
+                            <div class="col-3">N°</div>
+                            <div class="col-6">Descripción</div>
+                            <div class="col-2 text-center">Editar</div>
                         </div>
                     </div>
                     <div v-for="item in conceptos.data" class="table-row">
                         <div class="row">
-                            <div class="col-2">{{ item.id }}</div>
-                            <div class="col-5">{{ item.descripcion }}</div>
-                            <div class="col-1">
+                            <div class="col-3">{{ item.id }}</div>
+                            <div class="col-6">{{ item.descripcion }}</div>
+                            <div class="col-2 text-center">
                                 <a @click="getconcepto(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a>
                             </div>
                         </div>

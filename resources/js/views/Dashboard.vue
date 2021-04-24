@@ -90,33 +90,7 @@
     </div>
 </template>
 <style>
-#cumpleanios .card-body{
-    max-height: 200px;
-}
-p.comentario{
-    font-size: 12px;
-}
-.scrollable{
-    overflow-y: auto;
-}
-@media (max-width: 992px){
-    .sidebar{
-        width: 0px;
-    }
-    .sidebar .sidebar-header{
-        height: 0px;
-        padding: 0;
-    }
-    .content{
-        width: calc(100% - 0px);
-    }
-    .content-fluid{
-        padding: 16px 8px;
-    }
-}
-.card-resumen i{
-    font-size: 60px;
-}
+
 </style>
 <script>
 export default {

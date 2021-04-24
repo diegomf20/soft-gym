@@ -4,11 +4,11 @@
             <h1 class="card-title">Nuevo Ingreso</h1>
         </nav>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4 col-lg-2 form-group">
                 <label for="">Fecha:</label>
-                <input  class="form-control" type="date" v-model="venta.fecha">
+                <input class="form-control" type="date" v-model="venta.fecha">
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-8 col-lg-5 form-group">
                 <label for="">Nombres y apellidos ( <input 
                                         type="checkbox" 
                                         id="checkbox" 
@@ -33,30 +33,31 @@
                     </template>
                 </v-select>
                 <span class="text-danger">{{ error_ingreso.cliente_id }}</span>
-                
             </div>
-            
-            <div class="col-sm-2">
+            <div class="col-sm-6 col-lg-2 form-group">
                 <label for="">Cuenta</label>
                 <select class="form-control" v-model="venta.cuenta_id">
                     <option v-for="cuenta in cuentas" :value="cuenta.id">{{ cuenta.descripcion }}</option>
                 </select>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-6 col-lg-3 form-group">
                 <label for="">Referencia (**)</label>
                 <input type="text" class="form-control">
             </div>
         </div>
-        <div class="table">
+        <div class="table table-responsive">
             <div class="table-header">
                 <div class="row">
-                    <div class="col-1">Buscar</div>
-                    <div class="col-1">Tipo</div>
-                    <div class="col-4">Descripción</div>
-                    <div class="col-1">Cantidad</div>
-                    <div class="col-2">Monto</div>
-                    <div class="col-2">Sub Total</div>
-                    <div class="col-1">Quitar</div>
+                    <div class="col-1 text-center">Quitar</div>
+                    <div class="col-1 text-center">Buscar</div>
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col-6">Descripción</div>
+                            <div class="col-2">Cantidad</div>
+                            <div class="col-2">Monto</div>
+                            <div class="col-2">Sub Total</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div 
@@ -64,36 +65,48 @@
                 :key="item.id"
                 class="table-row">
                 <div class="row">
-                    <div class="col-1">
-                        <button class="btn btn-info" @click="buscarProducto(index)">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                    <div class="col-1">{{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }}</div>
-                    <div class="col-4">
-                        {{ item.descripcion_producto }}
-                        <div v-if="item.tipo=='S'">
-                            <hr>
-                            <div class="row">
-                                <div class="col-4">
-                                    <p>Fecha Inicio:</p>
-                                </div>
-                                <div class="col-8">
-                                    <input  class="form-control" type="date" v-model="item.fecha_inicio">
-                                </div>
+                    <div class="col-3 col-lg-2 text-center">
+                        <div class="row">
+                            <div class="col-lg-6 mb-sm">
+                                <a @click="removeItem(index)" type="button" class="btn btn-danger">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </div>
+                            <div class="col-lg-6">
+                                <button class="btn btn-info" @click="buscarProducto(index)">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-1">
-                        <input type="number" class="form-control" v-model="item.cantidad">
-                    </div>
-                    <div class="col-2">{{ Number(item.monto).toFixed(2) }}</div>
-                    <div class="col-2">
-                        {{(item.cantidad*item.monto).toFixed(2)}}
-                    </div>
-                    <div class="col-1">
-                        <a @click="removeItem(index)" type="button" class="btn btn-danger">X</a>
-                        <!-- <a @click="getcuenta(item.id)" type="button" class="text-primary"><i class="fas fa-pen"></i></a> -->
+                    <div class="col-9 col-lg-10">
+                        <div class="row">
+                            <div class="col-lg-6 mb-sm">
+                                {{ (item.tipo=='P') ? 'Producto' : (item.tipo=='S'?'Servicio':'') }} - {{ item.descripcion_producto }}
+                                <div v-if="item.tipo=='S'">
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <p class="mb-0">Fecha Inicio:</p>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input  class="form-control form-control-sm" type="date" v-model="item.fecha_inicio">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-lg-2">
+                                <label for="">Cantidad:</label>
+                                <input type="number" class="form-control form-control-sm" v-model="item.cantidad">
+                            </div>
+                            <div class="col-4 col-lg-2">
+                                <label for="">Monto</label>
+                                {{ Number(item.monto).toFixed(2) }}</div>
+                            <div class="col-4 col-lg-2">
+                                <label for="">Subtotal</label>
+                                {{(item.cantidad*item.monto).toFixed(2)}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,10 +117,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-4 form-group">
                 <button class="btn btn-primary" @click="addItem">+ Agregar Item</button>
             </div>
-            
         </div>
         <div class="row">
             <div class="col-sm-8"></div>

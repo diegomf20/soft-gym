@@ -6,10 +6,10 @@
         </nav>
         <div class="row">
             <div class="col-sm-6 col-lg-4 mb-3">
-                <input class="form-control" placeholder="search">
+                <input class="form-control" placeholder="search" v-model="search" @keyup="listar()">
             </div>
         </div>
-        <div class="table">
+        <div class="table table-responsive">
             <div class="table-header">
                 <div class="row">
                     <div class="col-3">Cliente</div>
@@ -24,12 +24,12 @@
                 class="table-row" 
                 :class="item.vencimiento<0 ? 'text-danger':''">
                 <div class="row">
-                    <div class="col-3">{{ item.descripcion_cliente }}</div>
-                    <div class="col-4">{{ item.descripcion_producto }}</div>
-                    <div class="col-3">
-                        {{ `${formatearFecha(item.fecha_inicio)} - ${formatearFecha(item.fecha_fin)}` }}
+                    <div class="col-lg-3"><label for="">Cliente</label>{{ item.descripcion_cliente }}</div>
+                    <div class="col-lg-4"><label for="">Producto</label>{{ item.descripcion_producto }}</div>
+                    <div class="col-lg-3">
+                        <label for="">Rango de Fechas</label>{{ `${formatearFecha(item.fecha_inicio)} - ${formatearFecha(item.fecha_fin)}` }}
                     </div>
-                    <div class="col-2">{{ item.vencimiento }}</div>
+                    <div class="col-lg-2"><label for="">Quedan</label>{{ item.vencimiento }}</div>
                 </div>
             </div>
         </div>
@@ -41,7 +41,8 @@ export default {
     components: { TablePaginate },
     data() {
         return {
-            membresias: []
+            membresias: [],
+            search: ''
         }
     },
     mounted() {
@@ -51,8 +52,8 @@ export default {
         formatearFecha(value){
             return moment(value).format('DD/MM/Y')
         },
-        listar(n=1){
-            axios.get(`${url_base}/reportes/membresias`).then((params)=> {
+        listar(){
+            axios.get(`${url_base}/reportes/membresias?search=${this.search}`).then((params)=> {
                 this.membresias=params.data
             }); 
         }

@@ -4,19 +4,19 @@
             <h1 class="card-title">BALANCE POR PERIODO</h1>
         </nav>
         <div class="row mb-3">
-            <div class="col-sm-2">
+            <div class="form-group col-sm-6 col-lg-2">
                 <b for="">Fecha Inicio:</b>
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-6 col-lg-3">
                 <input type="date" class="form-control" v-model="fecha_inicio">
             </div>
-            <div class="col-sm-2">
+            <div class="form-group col-sm-6 col-lg-2">
                 <b for="">Fecha Fin:</b>
             </div>
-            <div class="col-sm-3">
+            <div class="form-group col-sm-6 col-lg-3">
                 <input type="date" class="form-control" v-model="fecha_fin">
             </div>
-            <div class="col-sm-2">
+            <div class="form-group col-sm-6 col-lg-2">
                 <button class="btn btn-danger form-control" @click="listar()">
                     Buscar
                 </button>
@@ -43,12 +43,12 @@
                     </div>
                     <div class="table-row">
                         <div class="row">
-                            <div class="col-sm-9 text-right">Ingreso:</div>
-                            <div class="col-sm-3 text-right">{{ total_ingreso }}</div>
-                            <div class="col-sm-9 text-right">Egreso:</div>
-                            <div class="col-sm-3 text-danger text-right">{{ total_egreso }}</div>
-                            <div class="col-sm-9 text-right"><b>Total:</b></div>
-                            <div class="col-sm-3 text-right"><b>{{ (total_ingreso - total_egreso).toFixed(2) }}</b></div>
+                            <div class="col-9 text-right">Ingreso:</div>
+                            <div class="col-3 text-right">{{ total_ingreso }}</div>
+                            <div class="col-9 text-right">Egreso:</div>
+                            <div class="col-3 text-danger text-right">{{ total_egreso }}</div>
+                            <div class="col-9 text-right"><b>Total:</b></div>
+                            <div class="col-3 text-right"><b>{{ (total_ingreso - total_egreso).toFixed(2) }}</b></div>
                         </div>
                     </div>
                 </div>

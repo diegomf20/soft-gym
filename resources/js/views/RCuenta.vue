@@ -65,27 +65,35 @@
                                     <div class="table-header">
                                         <div class="row">
                                             <!-- <div class="col-2">Codigo</div> -->
-                                            <div class="col-6">Descripcion</div>
-                                            <div class="col-3">Ingreso</div>
-                                            <div class="col-3">Egreso</div>
+                                            <div class="col-5">Descripcion</div>
+                                            <div class="col-7">
+                                                <div class="row">
+                                                    <div class="col-6">Ingreso</div>
+                                                    <div class="col-6">Egreso</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div v-for="item in data" class="table-row">
                                         <div class="row">
                                             <!-- <div class="col-2">{{ item.id }}</div> -->
-                                            <div class="col-6">{{ item.descripcion }}</div>
-                                            <div class="col-3">{{ item.ingreso }}</div>
-                                            <div class="col-3">{{ item.egreso }}</div>
+                                            <div class="col-5">{{ item.descripcion }}</div>
+                                            <div class="col-7">
+                                                <div class="row">
+                                                    <div class="col-6">{{ item.ingreso }}</div>
+                                                    <div class="col-6">{{ item.egreso }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="table-row">
                                         <div class="row">
-                                            <div class="col-sm-9 text-right">Ingreso:</div>
-                                            <div class="col-sm-3 text-right">{{ total_ingreso }}</div>
-                                            <div class="col-sm-9 text-right">Egreso:</div>
-                                            <div class="col-sm-3 text-danger text-right">{{ total_egreso }}</div>
-                                            <div class="col-sm-9 text-right"><b>Total:</b></div>
-                                            <div class="col-sm-3 text-right"><b>{{ (total_ingreso - total_egreso).toFixed(2) }}</b></div>
+                                            <div class="col-8 text-right">Ingreso:</div>
+                                            <div class="col-4 text-right">{{ total_ingreso }}</div>
+                                            <div class="col-8 text-right">Egreso:</div>
+                                            <div class="col-4 text-danger text-right">{{ total_egreso }}</div>
+                                            <div class="col-8 text-right"><b>Total:</b></div>
+                                            <div class="col-4 text-right"><b>{{ (total_ingreso - total_egreso).toFixed(2) }}</b></div>
                                         </div>
                                     </div>
                                 </div>
