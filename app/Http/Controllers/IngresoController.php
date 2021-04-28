@@ -61,7 +61,7 @@ class IngresoController extends Controller
     {
         $cliente=Cliente::where('id',$request->cliente_id)->first();
         $movimiento=new Movimiento();
-        $movimiento->concepto_id=$request->has('concepto_id') ? $request->concepto_id:'IXC';
+        $movimiento->concepto_id=$request->has('concepto_id') ? $request->concepto_id:'IXP';
         $movimiento->cuenta_id=$request->cuenta_id;
         $movimiento->referencia=$request->referencia.' - '.( $cliente!=null ? $cliente->nombres.' '.$cliente->ape_paterno:'');
         $movimiento->monto=0;
